@@ -104,7 +104,7 @@ jobs:
           cargo doc
 
   build-bot:
-    name: Test
+    name: bot
     runs-on: ubuntu-latest
 
     steps:
@@ -116,5 +116,5 @@ jobs:
 
       - name: Compile
         run: |
-          cd bot &&  cargo clippy &&  cargo build
+          cd bot && cargo clippy && cargo build
 
