@@ -26,6 +26,8 @@ mod tests {
   use crate::api::types::{AccountWebhookEncoding, TokenType, TransactionType, TxnStatus};
   use crate::api::webhook::{CreateWebhookRequest, EditWebhookRequest, WebhookData, WebhookType};
   use crate::api::{Helius, HeliusBuilder};
+  use color_eyre::eyre::format_err;
+  use once_cell::sync::OnceCell;
   use solana_client::rpc_config::RpcBlockConfig;
   use solana_sdk::clock::Slot;
   use solana_sdk::commitment_config::CommitmentConfig;
@@ -34,8 +36,10 @@ mod tests {
   use std::env;
   use std::sync::Once;
   use std::time::Duration;
+  use tracing::{error, info};
   use tracing_subscriber::EnvFilter;
   static INIT: Once = Once::new();
+  static INSTANCE: OnceCell<Config> = OnceCell::new();
 
   fn setup() {
     INIT.call_once(|| {
@@ -44,13 +48,17 @@ mod tests {
       let filter = EnvFilter::from_default_env();
       let subscriber = tracing_subscriber::FmtSubscriber::builder().with_env_filter(filter).with_target(true).finish();
       tracing::subscriber::set_global_default(subscriber).expect("setting default subscriber failed");
+      match INSTANCE.set(Config::new()) {
+        Err(_) => error!("failed to set test Config"),
+        Ok(_) => info!("config setup"),
+      }
     });
   }
 
   #[rstest::fixture]
-  fn config() -> Config {
+  fn config() -> &'static Config {
     setup();
-    Config::new()
+    INSTANCE.get().unwrap()
   }
 
   struct Config {
@@ -66,8 +74,7 @@ mod tests {
     pub fn new() -> Self {
       let env = dotenvy::dotenv();
       let key: Option<String> = match env {
-        Err(_) => None,
-        Ok(_) => env::var("HELIUS_API_KEY").ok(),
+        _ => env::var("HELIUS_API_KEY").ok(),
       };
       let client: Option<Helius> =
         key.map(|k| HeliusBuilder::new(&k).timeout(Duration::from_secs(15)).build().unwrap());
@@ -78,7 +85,7 @@ mod tests {
   #[rstest::rstest]
   #[tokio::test]
   #[allow(clippy::unwrap_used)]
-  async fn test_enhanced_txn(config: Config) -> color_eyre::Result<()> {
+  async fn test_enhanced_txn(config: &Config) -> color_eyre::Result<()> {
     if config.client.is_none() {
       return Ok(());
     }
@@ -117,7 +124,7 @@ mod tests {
 
   #[rstest::rstest]
   #[tokio::test]
-  async fn webhook(config: Config) -> color_eyre::Result<()> {
+  async fn webhook(config: &Config) -> color_eyre::Result<()> {
     if config.client.is_none() {
       return Ok(());
     }
@@ -157,7 +164,7 @@ mod tests {
 
   #[rstest::rstest]
   #[tokio::test]
-  async fn test_get_names(config: Config) -> color_eyre::Result<()> {
+  async fn test_get_names(config: &Config) -> color_eyre::Result<()> {
     if config.client.is_none() {
       return Ok(());
     }
@@ -171,7 +178,7 @@ mod tests {
 
   #[rstest::rstest]
   #[tokio::test]
-  async fn test_get_asset_nft(config: Config) -> color_eyre::Result<()> {
+  async fn test_get_asset_nft(config: &Config) -> color_eyre::Result<()> {
     if config.client.is_none() {
       return Ok(());
     }
@@ -184,7 +191,7 @@ mod tests {
 
   #[rstest::rstest]
   #[tokio::test]
-  async fn get_asset_fungible(config: Config) -> color_eyre::Result<()> {
+  async fn get_asset_fungible(config: &Config) -> color_eyre::Result<()> {
     if config.client.is_none() {
       return Ok(());
     }
@@ -198,7 +205,7 @@ mod tests {
 
   #[rstest::rstest]
   #[tokio::test]
-  async fn get_asset_inscription(config: Config) -> color_eyre::Result<()> {
+  async fn get_asset_inscription(config: &Config) -> color_eyre::Result<()> {
     if config.client.is_none() {
       return Ok(());
     }
@@ -212,7 +219,7 @@ mod tests {
 
   #[rstest::rstest]
   #[tokio::test]
-  async fn get_asset_batch(config: Config) -> color_eyre::Result<()> {
+  async fn get_asset_batch(config: &Config) -> color_eyre::Result<()> {
     if config.client.is_none() {
       return Ok(());
     }
@@ -229,7 +236,7 @@ mod tests {
 
   #[rstest::rstest]
   #[tokio::test]
-  async fn get_asset_by_owner(config: Config) -> color_eyre::Result<()> {
+  async fn get_asset_by_owner(config: &Config) -> color_eyre::Result<()> {
     if config.client.is_none() {
       return Ok(());
     }
@@ -250,7 +257,7 @@ mod tests {
 
   #[rstest::rstest]
   #[tokio::test]
-  async fn asset_by_authority(config: Config) -> color_eyre::Result<()> {
+  async fn asset_by_authority(config: &Config) -> color_eyre::Result<()> {
     if config.client.is_none() {
       return Ok(());
     }
@@ -269,7 +276,7 @@ mod tests {
 
   #[rstest::rstest]
   #[tokio::test]
-  async fn get_asset_by_creator(config: Config) -> color_eyre::Result<()> {
+  async fn get_asset_by_creator(config: &Config) -> color_eyre::Result<()> {
     if config.client.is_none() {
       return Ok(());
     }
@@ -290,7 +297,7 @@ mod tests {
 
   #[rstest::rstest]
   #[tokio::test]
-  async fn search_asset(config: Config) -> color_eyre::Result<()> {
+  async fn search_asset(config: &Config) -> color_eyre::Result<()> {
     if config.client.is_none() {
       return Ok(());
     }
@@ -313,12 +320,13 @@ mod tests {
 
   #[rstest::rstest]
   #[test]
-  fn check_ci(config: Config) {
+  fn check_ci(config: &Config) -> color_eyre::Result<()> {
     match env::var("CI") {
-      Err(_) => {},
-      Ok(_) => {
-        assert!(config.client.is_some());
+      Err(_) => Ok(()),
+      Ok(_) => match config.client {
+        Some(_) => Ok(()),
+        None => Err(format_err!("client is not configured and you are running in CI")),
       },
-    };
+    }
   }
 }
