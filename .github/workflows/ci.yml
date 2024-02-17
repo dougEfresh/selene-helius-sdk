@@ -1,8 +1,8 @@
 on:
   push:
-    branches: [ master ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ master ]
+    branches: [ "main" ]
   merge_group:
 
 name: Continuous integration
@@ -15,28 +15,10 @@ env:
   CARGO_NET_RETRY: 10
   RUSTUP_MAX_RETRIES: 10
   HELIUS_API_KEY: ${{ secrets.HELIUS_API_KEY }}
+  CARGO_TERM_COLOR: always
   CI: 1
 
 jobs:
-  # Depends on all action that are required for a "successful" CI run.
-  ci-pass:
-    name: CI succeeded
-    runs-on: ubuntu-latest
-    if: always()
-
-    needs:
-      - fmt
-      - test
-      - check-examples
-      - clippy
-      - doc
-
-    steps:
-      - name: Check whether the needed jobs succeeded or failed
-        uses: re-actors/alls-green@release/v1
-        with:
-          jobs: ${{ toJSON(needs) }}
-
   fmt:
     name: fmt
     runs-on: rust:1-bookworm
