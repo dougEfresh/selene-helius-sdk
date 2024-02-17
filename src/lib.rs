@@ -315,7 +315,7 @@ mod tests {
   #[test]
   fn check_ci(config: Config) {
     match env::var("CI") {
-      None => {},
+      Err(_) => {},
       Ok(_) => {
         assert!(config.client.is_some());
       },
