@@ -1,0 +1,50 @@
+[
+  {
+    "accountData": [
+      {
+        "account": "A4SfgGV2v9GLYsEkCQhrrnFbBcYmAiUZZbJ7swKGzZHJ",
+        "nativeBalanceChange": -1005000,
+        "tokenBalanceChanges": []
+      },
+      {
+        "account": "6NCs7ZnMhmQP61bhhbp75Py5eHjGNRqg8y6grehnJumS",
+        "nativeBalanceChange": 1000000,
+        "tokenBalanceChanges": []
+      },
+      {
+        "account": "11111111111111111111111111111111",
+        "nativeBalanceChange": 0,
+        "tokenBalanceChanges": []
+      }
+    ],
+    "description": "A4SfgGV2v9GLYsEkCQhrrnFbBcYmAiUZZbJ7swKGzZHJ transferred 0.001 SOL to 6NCs7ZnMhmQP61bhhbp75Py5eHjGNRqg8y6grehnJumS.",
+    "events": {},
+    "fee": 5000,
+    "feePayer": "A4SfgGV2v9GLYsEkCQhrrnFbBcYmAiUZZbJ7swKGzZHJ",
+    "instructions": [
+      {
+        "accounts": [
+          "A4SfgGV2v9GLYsEkCQhrrnFbBcYmAiUZZbJ7swKGzZHJ",
+          "6NCs7ZnMhmQP61bhhbp75Py5eHjGNRqg8y6grehnJumS"
+        ],
+        "data": "3Bxs4Bc3VYuGVB19",
+        "innerInstructions": [],
+        "programId": "11111111111111111111111111111111"
+      }
+    ],
+    "nativeTransfers": [
+      {
+        "amount": 1000000,
+        "fromUserAccount": "A4SfgGV2v9GLYsEkCQhrrnFbBcYmAiUZZbJ7swKGzZHJ",
+        "toUserAccount": "6NCs7ZnMhmQP61bhhbp75Py5eHjGNRqg8y6grehnJumS"
+      }
+    ],
+    "signature": "BAKK2979TQQke9qpYrzVwXRW591g7KHHgpFuXa1RcW7MFLe5P3MabDPx3BFLceBeFeTv3CL3T8v7K1LswesBvw7",
+    "slot": 279034095,
+    "source": "SYSTEM_PROGRAM",
+    "timestamp": 1708095605,
+    "tokenTransfers": [],
+    "transactionError": null,
+    "type": "TRANSFER"
+  }
+]

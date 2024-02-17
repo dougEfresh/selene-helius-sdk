@@ -1,0 +1,49 @@
+[package]
+name = "selene-helius-sdk"
+version = "0.1.0"
+edition = "2021"
+authors = ["dougefresh"]
+description = "Rust implementation of the Helius API & RPC"
+readme = "README.md"
+repository = "https://github.com/dougEfresh/selene-helius-sdk"
+homepage = "https://github.com/dougEfresh/selene-helius-sdk"
+license = "MIT"
+keywords = ["solana", "helius"]
+categories = ["cryptography::cryptocurrencies"]
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+enum_glob_use = "deny"
+pedantic = "deny"
+nursery = "deny"
+unwrap_used = "deny"
+implicit_return = "allow"
+must_use_candidate = "allow"
+module_name_repetitions = "allow"
+missing_const_for_fn = "allow"
+
+
+[dependencies]
+solana-client = { version = ">= 1.16, < 1.18"  }
+solana-sdk = { version = ">= 1.16, < 1.18" }
+reqwest = {version = "0.11", features = [ "json"] }
+serde-enum-str = "0.4"
+serde_json = "^1"
+serde = { version = "^1", features = ["derive"] }
+derive-alias = "0.1"
+tokio = { version = "^1", features = ["full"] }
+color-eyre = { version = "0.6" }
+rstest = "0.18"
+thiserror = "1"
+url = "^2"
+log = { version = "0.4" , features = ["std", "serde", "kv_unstable", "kv_unstable_serde"] }
+tracing = {  version = "0.1" }
+tracing-log = {version = "0.2" }
+tracing-error = { version = "0.2" }
+tracing-subscriber = { version = "0.3", features = ["env-filter", "serde"] }
+
+[dev-dependencies]
+dotenvy = "0.15.7"
+solana-transaction-status = "1"
