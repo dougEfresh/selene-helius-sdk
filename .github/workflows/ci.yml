@@ -21,7 +21,7 @@ env:
 jobs:
   fmt:
     name: fmt
-    runs-on: rust:1-bookworm
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
