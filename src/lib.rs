@@ -49,9 +49,9 @@ mod tests {
       let subscriber = tracing_subscriber::FmtSubscriber::builder().with_env_filter(filter).with_target(true).finish();
       tracing::subscriber::set_global_default(subscriber).expect("setting default subscriber failed");
       if INSTANCE.set(Config::new()).is_err() {
-        error!("failed to set test Config")
+        error!("failed to set test Config");
       } else {
-        info!("config setup")
+        info!("config setup");
       }
     });
   }
