@@ -116,8 +116,5 @@ jobs:
 
       - name: Compile
         run: |
-          cd bot && cargo build
+          cd bot &&  cargo clippy &&  cargo build
 
-      - name: Clippy
-        run: |
-          cd bot && cargo clippy --all-targets

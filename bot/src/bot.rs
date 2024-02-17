@@ -73,7 +73,7 @@ impl SeleneBot {
     Ok(Self { id, bot, helius, name_cache })
   }
 
-  async fn find_names(&self, transactions: &Vec<EnhancedTransaction>) -> color_eyre::Result<Vec<AccountName>> {
+  async fn find_names(&self, transactions: &[EnhancedTransaction]) -> color_eyre::Result<Vec<AccountName>> {
     let mut names: Vec<AccountName> = transactions
       .iter()
       .flat_map(|t| t.account_data.iter())
