@@ -48,9 +48,10 @@ mod tests {
       let filter = EnvFilter::from_default_env();
       let subscriber = tracing_subscriber::FmtSubscriber::builder().with_env_filter(filter).with_target(true).finish();
       tracing::subscriber::set_global_default(subscriber).expect("setting default subscriber failed");
-      match INSTANCE.set(Config::new()) {
-        Err(_) => error!("failed to set test Config"),
-        Ok(_) => info!("config setup"),
+      if INSTANCE.set(Config::new()).is_err() {
+        error!("failed to set test Config")
+      } else {
+        info!("config setup")
       }
     });
   }
@@ -73,9 +74,10 @@ mod tests {
 
     pub fn new() -> Self {
       let env = dotenvy::dotenv();
-      let key: Option<String> = match env {
-        _ => env::var("HELIUS_API_KEY").ok(),
-      };
+      if env.is_err() {
+        info!("no .env file");
+      }
+      let key: Option<String> = env::var("HELIUS_API_KEY").ok();
       let client: Option<Helius> =
         key.map(|k| HeliusBuilder::new(&k).timeout(Duration::from_secs(15)).build().unwrap());
       Self { client }
