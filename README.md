@@ -128,6 +128,11 @@ There's an example telegram [bot](./bot/) which can create [webooks]((https://do
  ./target/release/selene-helius-bot webhook create --url <your webhook.site>  86xCnPeV69n6t3DnyGvkKobf9FdN2H9oiVDdaMpo2MMY HHLUSPgvrHBJeVHaANgFTaMVX2YYX25V3CrvktgrLYns 
 ```
 
+You can run your own server:
+
+```shell
+./target/debug/selene-helius-bot serve -helius-api-key <HELIUS_API_KEY> --selene-chat-id <SELENE_CHAT_ID> --teloxide-token <TELOXIDE_TOKEN>
+```
 
 ---
 
