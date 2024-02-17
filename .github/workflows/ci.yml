@@ -101,7 +101,7 @@ jobs:
 
       - name: rustdoc
         run: |
-          cargo docs
+          cargo doc
 
   build-bot:
     name: Test
