@@ -36,7 +36,7 @@ jobs:
 
   test:
     name: Test
-    runs-on: ubuntu:latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
@@ -55,7 +55,7 @@ jobs:
           cargo test --doc
 
   check-examples:
-    runs-on: ubuntu:latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
@@ -75,7 +75,7 @@ jobs:
 
   clippy:
     name: Run linter
-    runs-on: ubuntu:latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
@@ -90,7 +90,7 @@ jobs:
 
   doc:
     name: check docs
-    runs-on: ubuntu:latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
@@ -105,7 +105,7 @@ jobs:
 
   build-bot:
     name: Test
-    runs-on: ubuntu:latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
