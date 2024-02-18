@@ -14,7 +14,10 @@ exclude = [
   "assets/*",
   ".github",
   "CONTRIBUTING.md",
-  "*.log"
+  "*.log",
+  "Dockerfile",
+  ".env*",
+  ".dockerignore"
 ]
 rust-version = "1.76.0"
 
