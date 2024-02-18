@@ -2,7 +2,7 @@
 name = "selene-helius-sdk"
 version = "0.1.0-beta.0"
 edition = "2021"
-authors = ["dougefresh"]
+authors = ["dougefresh <dchimento@gmail.com>"]
 description = "Rust implementation of the Helius API & RPC"
 readme = "README.md"
 repository = "https://github.com/dougEfresh/selene-helius-sdk"
@@ -10,6 +10,13 @@ homepage = "https://github.com/dougEfresh/selene-helius-sdk"
 license = "MIT"
 keywords = ["solana", "helius"]
 categories = ["cryptography::cryptocurrencies"]
+exclude = [
+  "assets/*",
+  ".github",
+  "CONTRIBUTING.md",
+  "*.log"
+]
+rust-version = "1.76.0"
 
 [lints.rust]
 unsafe_code = "forbid"
