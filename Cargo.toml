@@ -17,9 +17,15 @@ exclude = [
   "*.log",
   "Dockerfile",
   ".env*",
-  ".dockerignore"
+  ".dockerignore",
+  "codecov.yml"
 ]
 rust-version = "1.76.0"
+
+
+[lib]
+name = "selene_helius_sdk"
+path = "src/lib.rs"
 
 [lints.rust]
 unsafe_code = "forbid"
