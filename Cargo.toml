@@ -1,6 +1,6 @@
 [package]
 name = "selene-helius-sdk"
-version = "0.1.0"
+version = "0.1.0-beta.0"
 edition = "2021"
 authors = ["dougefresh"]
 description = "Rust implementation of the Helius API & RPC"
@@ -45,6 +45,6 @@ tracing-error = { version = "0.2" }
 tracing-subscriber = { version = "0.3", features = ["env-filter", "serde"] }
 
 [dev-dependencies]
-dotenvy = "0.15.7"
-solana-transaction-status = "1"
+dotenvy = "0.15"
+solana-transaction-status = ">= 1.16.0, < 1.18"
 once_cell = "1"

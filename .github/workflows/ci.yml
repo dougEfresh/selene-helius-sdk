@@ -16,7 +16,9 @@ env:
   RUSTUP_MAX_RETRIES: 10
   HELIUS_API_KEY: ${{ secrets.HELIUS_API_KEY }}
   CARGO_TERM_COLOR: always
+  token: ${{ secrets.CODECOV_TOKEN }}
   CI: 1
+  slug: dougEfresh/selene-helius-sdk
 
 jobs:
   fmt:
@@ -41,15 +43,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-
       - name: Cache Dependencies
         uses: Swatinem/rust-cache@v2
-
       - name: Compile
         run: |
           cargo  test
-
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4.0.1
       - name: Test documentation tests
         run: |
           cargo test --doc
@@ -60,15 +60,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Install Rust stable
-        uses: dtolnay/rust-toolchain@master
-        with:
-          toolchain: stable
-
+#      - name: Install Rust stable
+#        uses: dtolnay/rust-toolchain@master
+#        with:
+#          toolchain: stable
       - name: Cache Dependencies
         uses: Swatinem/rust-cache@v2
-
       - name: Check examples
         run: |
           cargo check --examples
@@ -76,14 +73,11 @@ jobs:
   clippy:
     name: Run linter
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Cache Dependencies
         uses: Swatinem/rust-cache@v2
-
       - name: clippy
         run: |
           cargo clippy --all-targets
@@ -91,14 +85,11 @@ jobs:
   doc:
     name: check docs
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Cache Dependencies
         uses: Swatinem/rust-cache@v2
-
       - name: rustdoc
         run: |
           cargo doc
@@ -106,14 +97,11 @@ jobs:
   build-bot:
     name: bot
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Cache Dependencies
         uses: Swatinem/rust-cache@v2
-
       - name: Compile
         run: |
           cd bot && cargo clippy && cargo build

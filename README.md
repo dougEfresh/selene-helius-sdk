@@ -7,6 +7,12 @@
   <a href="https://github.com/dougEfresh/selene-helius-sdk/actions">
     <img src="https://github.com/dougEfresh/selene-helius-sdk/workflows/Continuous%20integration/badge.svg">
   </a>
+  <a href="https://deps.rs/repo/github/dougEfresh/selene-helius-sdk">
+    <img>"https://deps.rs/repo/github/dougEfresh/selene-helius-sdk/status.svg">
+  </a>
+  <a href="https://codecov.io/gh/dougEfresh/selene-helius-sdk" > 
+   <img src="https://codecov.io/gh/dougEfresh/selene-helius-sdk/graph/badge.svg?token=OI06VXUKKJ"/> 
+ </a>  
   <a href="https://crates.io/crates/selene-helius-sdk">
     <img src="https://img.shields.io/crates/v/selene-helius-sdk.svg">
   </a>
