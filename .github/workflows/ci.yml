@@ -16,7 +16,7 @@ env:
   RUSTUP_MAX_RETRIES: 10
   HELIUS_API_KEY: ${{ secrets.HELIUS_API_KEY }}
   CARGO_TERM_COLOR: always
-  CODECOV_TOKEN: ${{ CODECOV_TOKEN }}
+  CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
   CI: 1
 
 jobs:
