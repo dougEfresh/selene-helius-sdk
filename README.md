@@ -112,7 +112,9 @@ See [examples](./examples) directory for various ways to use the library
 * Create a webhook
 
 ```shell
-HELIUS_API_KEY=<mykey> cargo run --example create_webhook -- https://webhook.site/8dee5d00-b261-423d-8c34-5ebbb8849302 <address>...
+HELIUS_API_KEY=<mykey> cargo run --example create_webhook -- \
+  https://webhook.site/8dee5d00-b261-423d-8c34-5ebbb8849302 \
+  <address>...
 ```
 
 ## Development 
@@ -126,18 +128,24 @@ HELIUS_API_KEY=mykey cargo test
 
 ## Bot 
 
-There's an example telegram [bot](./bot/) which can create [webooks]((https://docs.helius.dev/webhooks-and-websockets/api-reference/create-webhook) and send solana activity to your telegram channel 
+There's an example telegram [bot](./bot/) which can create [webooks](https://docs.helius.dev/webhooks-and-websockets/api-reference/create-webhook) and send solana activity to your telegram channel
 
 1. Visit [https://webhook.site/](https://webhook.site/) 
 2. `cd bot && cargo build --release`
 ```shell
- ./target/release/selene-helius-bot webhook create --url <your webhook.site>  86xCnPeV69n6t3DnyGvkKobf9FdN2H9oiVDdaMpo2MMY HHLUSPgvrHBJeVHaANgFTaMVX2YYX25V3CrvktgrLYns 
+ ./target/release/selene-helius-bot webhook create \
+   --url <your webhook.site> \
+   86xCnPeV69n6t3DnyGvkKobf9FdN2H9oiVDdaMpo2MMY\
+   HHLUSPgvrHBJeVHaANgFTaMVX2YYX25V3CrvktgrLYns 
 ```
 
 You can run your own server:
 
 ```shell
-./target/debug/selene-helius-bot serve -helius-api-key <HELIUS_API_KEY> --selene-chat-id <SELENE_CHAT_ID> --teloxide-token <TELOXIDE_TOKEN>
+./target/debug/selene-helius-bot serve \
+  --helius-api-key <HELIUS_API_KEY> \
+  --selene-chat-id <SELENE_CHAT_ID> \
+  --teloxide-token <TELOXIDE_TOKEN>
 ```
 
 ---
