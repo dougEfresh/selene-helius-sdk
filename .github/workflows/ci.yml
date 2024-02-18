@@ -23,18 +23,14 @@ jobs:
   fmt:
     name: fmt
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Cache Dependencies
         uses: Swatinem/rust-cache@v2
-
       - name: Check formatting
         run: |
           cargo fmt --all -- --check
-
   test:
     name: Test
     runs-on: ubuntu-latest
@@ -44,12 +40,21 @@ jobs:
         uses: actions/checkout@v4
       - name: Cache Dependencies
         uses: Swatinem/rust-cache@v2
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: llvm-tools
+      - name: Install cargo-llvm-cov and cargo-make
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-llvm-cov,cargo-make        
       - name: Compile
         run: |
-          cargo test
+          echo cargo test
+          cargo llvm-cov --lcov --output-path target/lcov.info
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.0.1
-        env:
+        with:
           slug: dougEfresh/selene-helius-sdk
           token: ${{ secrets.CODECOV_TOKEN }}
       - name: Test documentation tests
