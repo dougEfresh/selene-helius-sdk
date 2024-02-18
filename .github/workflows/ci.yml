@@ -16,9 +16,7 @@ env:
   RUSTUP_MAX_RETRIES: 10
   HELIUS_API_KEY: ${{ secrets.HELIUS_API_KEY }}
   CARGO_TERM_COLOR: always
-  token: ${{ secrets.CODECOV_TOKEN }}
   CI: 1
-  slug: dougEfresh/selene-helius-sdk
 
 jobs:
   fmt:
@@ -47,9 +45,12 @@ jobs:
         uses: Swatinem/rust-cache@v2
       - name: Compile
         run: |
-          cargo  test
+          cargo test
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.0.1
+        env:
+          slug: dougEfresh/selene-helius-sdk
+          token: ${{ secrets.CODECOV_TOKEN }}
       - name: Test documentation tests
         run: |
           cargo test --doc
