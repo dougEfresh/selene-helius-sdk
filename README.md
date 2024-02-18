@@ -8,7 +8,7 @@
     <img src="https://github.com/dougEfresh/selene-helius-sdk/workflows/Continuous%20integration/badge.svg">
   </a>
   <a href="https://deps.rs/repo/github/dougEfresh/selene-helius-sdk">
-    <img>"https://deps.rs/repo/github/dougEfresh/selene-helius-sdk/status.svg">
+    <img src="https://deps.rs/repo/github/dougEfresh/selene-helius-sdk/status.svg" >
   </a>
   <a href="https://codecov.io/gh/dougEfresh/selene-helius-sdk" > 
    <img src="https://codecov.io/gh/dougEfresh/selene-helius-sdk/graph/badge.svg?token=OI06VXUKKJ"/> 
