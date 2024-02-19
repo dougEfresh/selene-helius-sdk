@@ -1,6 +1,7 @@
 use crate::api::types::{
   AssetSortBy, AssetSortDirection, Context, Interface, OwnershipModel, RoyaltyModel, Scope, TokenType, UseMethods,
 };
+use bigdecimal::{BigDecimal, Zero};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
@@ -141,6 +142,7 @@ pub struct GetAssetResponse {
   pub supply: Option<Supply>,
   pub mutable: bool,
   pub burnt: bool,
+  pub price_info: Option<PriceInfo>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Default)]
@@ -279,4 +281,28 @@ pub struct Compression {
   pub tree: String,
   pub seq: u32,
   pub leaf_id: u32,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct PriceInfo {
+  price_per_token: BigDecimal,
+  total_price: BigDecimal,
+  currency: String,
+}
+
+impl Default for PriceInfo {
+  fn default() -> Self {
+    Self { price_per_token: BigDecimal::zero(), total_price: BigDecimal::zero(), currency: String::from("USDC") }
+  }
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Default)]
+pub struct TypeInfo {
+  pub symbol: String,
+  pub balance: u64,
+  pub supply: u64,
+  pub decimals: i32,
+  pub token_program: String,
+  pub associated_token_address: String,
+  pub price_info: PriceInfo,
 }
