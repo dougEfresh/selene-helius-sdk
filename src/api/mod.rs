@@ -107,12 +107,6 @@ impl HeliusBuilder {
 }
 
 impl Helius {
-  pub fn new(api_key: &str, cluster: Cluster, client: reqwest::Client) -> Self {
-    let endpoint = rpc_url_from_cluster(api_key, cluster);
-    let connection = RpcClient::new(endpoint);
-    Self { api_key: String::from(api_key), cluster, rpc: Arc::new(connection), handler: RequestHandler::new(client) }
-  }
-
   #[must_use]
   pub fn connection(&self) -> &RpcClient {
     &self.rpc
@@ -133,5 +127,24 @@ impl Helius {
   fn make_url(&self, base: &str, method: &str) -> crate::Result<Url> {
     let u = format!("{base}/{method}?api-key={}", self.api_key);
     Url::parse(&u).map_err(std::convert::Into::into)
+  }
+}
+
+#[cfg(test)]
+mod tests {
+  use crate::Cluster::Devnet;
+  use crate::HeliusBuilder;
+  use std::time::Duration;
+
+  #[test]
+  fn helius_builder() {
+    let helius = HeliusBuilder::new("something")
+      .cluster(Devnet)
+      .connect_timeout(Duration::from_secs(1))
+      .timeout(Duration::from_secs(1))
+      .http_client(reqwest::Client::new())
+      .build()
+      .expect("failed to create client");
+    assert_eq!(helius.cluster, Devnet);
   }
 }

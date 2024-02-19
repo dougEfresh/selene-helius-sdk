@@ -44,9 +44,9 @@ impl Helius {
   /// # Errors
   ///
   /// Will return `HeliusError`
-  pub async fn append_addresses_to_webhook(&self, webhook_id: &str, new_addresses: Vec<String>) -> Result<Webhook> {
+  pub async fn append_addresses_to_webhook(&self, webhook_id: &str, new_addresses: &[String]) -> Result<Webhook> {
     let mut webhook = self.get_webhook_by_id(webhook_id).await?;
-    webhook.webhook_data.account_addresses.extend(new_addresses);
+    webhook.webhook_data.account_addresses.extend(new_addresses.to_vec());
     let edit_request = EditWebhookRequest { webhook_id: webhook_id.to_string(), data: webhook.webhook_data };
     self.edit_webhook(&edit_request).await
   }

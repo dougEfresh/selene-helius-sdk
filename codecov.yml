@@ -8,3 +8,4 @@ coverage: # https://docs.codecov.com/docs/codecovyml-reference#coverage
         threshold: 1% # Avoid false negatives
 ignore:
   - "examples"
+  - "src/error.rs"

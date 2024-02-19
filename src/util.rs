@@ -1,7 +1,6 @@
 use serde::de::Error as SerdeError;
 use serde::{Deserialize, Deserializer};
 use serde_json::{Number, Value};
-use tracing_subscriber::EnvFilter;
 
 pub(crate) fn deserialize_str_to_number<'de, D>(deserializer: D) -> Result<Number, D::Error>
 where
@@ -15,11 +14,22 @@ where
   }
 }
 
-#[allow(dead_code, clippy::missing_errors_doc)]
-pub fn init_tracing() -> color_eyre::Result<()> {
-  color_eyre::install()?;
-  let filter = EnvFilter::from_default_env();
-  let subscriber = tracing_subscriber::FmtSubscriber::builder().with_env_filter(filter).with_target(true).finish();
-  tracing::subscriber::set_global_default(subscriber)?;
-  Ok(())
+#[cfg(test)]
+mod tests {
+  use crate::util::deserialize_str_to_number;
+  use serde::Deserialize;
+  use serde_json::Number;
+
+  #[derive(Deserialize, Debug)]
+  struct Blah {
+    #[serde(deserialize_with = "deserialize_str_to_number")]
+    num_str: Number,
+  }
+
+  #[test]
+  fn str_to_number() -> color_eyre::Result<()> {
+    let blah: Blah = serde_json::from_str(r#"{"num_str": 2 }"#)?;
+    assert_eq!(blah.num_str.as_i64().unwrap_or(0), 2);
+    Ok(())
+  }
 }

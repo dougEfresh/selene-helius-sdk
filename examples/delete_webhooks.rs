@@ -1,8 +1,16 @@
 extern crate selene_helius_sdk;
 use color_eyre::Result;
 use selene_helius_sdk::api::webhook::Webhook;
-use selene_helius_sdk::util::init_tracing;
 use selene_helius_sdk::{Cluster, HeliusBuilder};
+use tracing_subscriber::EnvFilter;
+
+fn init_tracing() -> Result<()> {
+  color_eyre::install()?;
+  let filter = EnvFilter::from_default_env();
+  let subscriber = tracing_subscriber::FmtSubscriber::builder().with_env_filter(filter).with_target(true).finish();
+  tracing::subscriber::set_global_default(subscriber)?;
+  Ok(())
+}
 
 // delete webhook from https://webhook.site/
 #[tokio::main]

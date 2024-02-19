@@ -92,7 +92,7 @@ API reference documentation is available at [docs.helius.dev](https://docs.heliu
 | [get-webhook](https://docs.helius.dev/webhooks-and-websockets/api-reference/get-webhook)           | &check; | 
 | [edit-webhook](https://docs.helius.dev/webhooks-and-websockets/api-reference/edit-webhook)         | &check; | 
 | [delete-webhook](https://docs.helius.dev/webhooks-and-websockets/api-reference/delete-webhook)     | &check; |
-| [appendAddressesToWebhook](https://docs.helius.dev/webhooks-and-websockets)                        | &cross; |
+| [appendAddressesToWebhook](https://docs.helius.dev/webhooks-and-websockets)                        | &check; |
 
 
 ### Mint API
