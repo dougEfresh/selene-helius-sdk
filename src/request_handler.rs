@@ -44,7 +44,8 @@ impl RequestHandler {
     }
 
     let resp = req.send().await?;
-    let text = self.handle_status(path, resp).await?;
+    let status_code = resp.status();
+    let text = Self::handle_status(path, status_code, resp.text().await?)?;
     if text.is_empty() {
       return Ok(T::default());
     }
@@ -57,9 +58,8 @@ impl RequestHandler {
     }
   }
 
-  async fn handle_status(&self, path: String, resp: reqwest::Response) -> Result<String> {
-    let status = resp.status();
-    let text = resp.text().await?;
+  fn handle_status(path: String, status: StatusCode, text: String) -> Result<String> {
+    //TODO trim text, as it can be huge
     match status {
       StatusCode::OK | StatusCode::ACCEPTED | StatusCode::CREATED => Ok(text),
       StatusCode::NOT_FOUND => Err(HeliusError::NotFound { path }),
@@ -98,5 +98,78 @@ impl RequestHandler {
 
   pub async fn delete(&self, url: Url) -> Result<()> {
     self.send(Method::DELETE, url, None as Option<&str>).await
+  }
+}
+
+#[cfg(test)]
+mod tests {
+  use crate::error::HeliusError;
+  use crate::request_handler::RequestHandler;
+  use color_eyre::eyre::format_err;
+  use reqwest::StatusCode;
+
+  #[test]
+  fn handle_status_text() -> color_eyre::Result<()> {
+    let body = String::from("body");
+    let path = String::from("/");
+    let text = RequestHandler::handle_status(path.clone(), StatusCode::OK, body.clone())?;
+    assert_eq!(body, text);
+
+    let text = RequestHandler::handle_status(path.clone(), StatusCode::ACCEPTED, body.clone())?;
+    assert_eq!(body, text);
+
+    let text = RequestHandler::handle_status(path.clone(), StatusCode::CREATED, body.clone())?;
+    assert_eq!(body, text);
+
+    let result = RequestHandler::handle_status(path.clone(), StatusCode::NOT_FOUND, body.clone());
+    assert!(result.is_err());
+    match result {
+      Err(HeliusError::NotFound { .. }) => {},
+      _ => return Err(format_err!("error should be NOT_FOUND ")),
+    };
+
+    let result = RequestHandler::handle_status(path.clone(), StatusCode::SERVICE_UNAVAILABLE, body.clone());
+    assert!(result.is_err());
+    match result {
+      Err(HeliusError::InternalError { .. }) => {},
+      _ => return Err(format_err!("error should be INTERNAL_ERROR ")),
+    };
+
+    let result = RequestHandler::handle_status(path.clone(), StatusCode::INTERNAL_SERVER_ERROR, body.clone());
+    assert!(result.is_err());
+    match result {
+      Err(HeliusError::InternalError { .. }) => {},
+      _ => return Err(format_err!("error should be INTERNAL_ERROR ")),
+    };
+
+    let result = RequestHandler::handle_status(path.clone(), StatusCode::BAD_REQUEST, body.clone());
+    assert!(result.is_err());
+    match result {
+      Err(HeliusError::BadRequest { .. }) => {},
+      _ => return Err(format_err!("error should be BadRequest ")),
+    };
+
+    let result = RequestHandler::handle_status(path.clone(), StatusCode::UNAUTHORIZED, body.clone());
+    assert!(result.is_err());
+    match result {
+      Err(HeliusError::Unauthorized { .. }) => {},
+      _ => return Err(format_err!("error should be UNAUTHORIZED ")),
+    };
+
+    let result = RequestHandler::handle_status(path.clone(), StatusCode::TOO_MANY_REQUESTS, body.clone());
+    assert!(result.is_err());
+    match result {
+      Err(HeliusError::TooManyRequests { .. }) => {},
+      _ => return Err(format_err!("error should be TOO_MANY_REQUESTS ")),
+    };
+
+    let result = RequestHandler::handle_status(path.clone(), StatusCode::IM_A_TEAPOT, body.clone());
+    assert!(result.is_err());
+    match result {
+      Err(HeliusError::Unknown { .. }) => {},
+      _ => return Err(format_err!("error should be UNKNOWN")),
+    };
+
+    Ok(())
   }
 }

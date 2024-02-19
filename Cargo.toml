@@ -57,6 +57,7 @@ tracing = {  version = "0.1" }
 tracing-log = {version = "0.2" }
 tracing-error = { version = "0.2" }
 tracing-subscriber = { version = "0.3", features = ["env-filter", "serde"] }
+bigdecimal = {  version = "^0.3.0", features = ["serde"] }
 
 [dev-dependencies]
 dotenvy = "0.15"
