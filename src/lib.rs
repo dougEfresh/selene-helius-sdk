@@ -337,8 +337,7 @@ mod tests {
       .await?
       .items
       .into_iter()
-      .filter(|i| i.token_info.is_some())
-      .map(|i| i.token_info.unwrap())
+      .filter_map(|i| i.token_info)
       .collect();
 
     assert!(!response.is_empty());
