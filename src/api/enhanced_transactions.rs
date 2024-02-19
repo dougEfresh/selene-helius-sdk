@@ -6,6 +6,6 @@ impl Helius {
   ///
   /// Will return `HeliusError`
   pub async fn parse_transaction(&self, transactions: &ParseTransactionsRequest) -> Result<Vec<EnhancedTransaction>> {
-    self.handler.post(self.get_url_v0("transactions")?, transactions).await
+    self.handler.post(self.make_url("transactions")?, transactions).await
   }
 }

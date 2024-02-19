@@ -15,7 +15,7 @@ impl Helius {
     T: DeserializeOwned + Default,
   {
     let request = Req::new(method, params);
-    let res: Res<T> = self.handler.post(self.get_das_url()?, &request).await?;
+    let res: Res<T> = self.handler.post(self.rpc_endpoint.clone(), &request).await?;
     Ok(res.result)
   }
 

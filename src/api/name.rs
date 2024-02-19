@@ -13,6 +13,6 @@ impl Helius {
   /// Will return `HeliusError`
   pub async fn get_names(&self, address: &str) -> Result<Names> {
     let method = format!("addresses/{address}/names");
-    self.handler.get(self.get_url_v0(method.as_str())?).await
+    self.handler.get(self.make_url(&method)?).await
   }
 }
