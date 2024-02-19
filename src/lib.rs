@@ -20,7 +20,8 @@ pub enum Cluster {
 mod tests {
   use crate::api::das::{
     DisplayOptions, GetAssetBatchParams, GetAssetParams, GetAssetProofBatchParams, GetAssetProofParams,
-    GetAssetsByAuthorityParams, GetAssetsByCreatorParams, GetAssetsByOwnerParams, Pagination, SearchAssetsParams,
+    GetAssetsByAuthorityParams, GetAssetsByCreatorParams, GetAssetsByGroupParams, GetAssetsByOwnerParams, Pagination,
+    SearchAssetsParams,
   };
   use crate::api::types::enhanced::ParseTransactionsRequest;
   use crate::api::types::{AccountWebhookEncoding, TokenType, TransactionType, TxnStatus};
@@ -313,6 +314,24 @@ mod tests {
         })
         .await?;
     }
+    Ok(())
+  }
+
+  #[rstest::rstest]
+  #[tokio::test]
+  async fn asset_groups(config: Config) -> color_eyre::Result<()> {
+    if config.client.is_none() {
+      return Ok(());
+    }
+    let client = config.client();
+    let rando = String::from("J1S9H3QjnRtBbbuD4HjPV6RpRhwuk4zKbxsnCHuTgh9w");
+    client
+      .get_assets_by_group(&GetAssetsByGroupParams {
+        group_key: "collection".to_string(),
+        group_value: rando,
+        ..Default::default()
+      })
+      .await?;
     Ok(())
   }
 
