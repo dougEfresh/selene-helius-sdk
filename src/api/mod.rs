@@ -14,7 +14,6 @@ use url::Url;
 
 const API_URL_V0: &str = "https://api-mainnet.helius-rpc.com/v0";
 const DEV_API_URL_V0: &str = "https://api-devnet.helius-rpc.com/v0";
-const DAS_URL: &str = "https://mainnet.helius-rpc.com";
 
 static APP_USER_AGENT: &str = concat!(env!("CARGO_PKG_NAME"), "/", env!("CARGO_PKG_VERSION"),);
 
@@ -28,7 +27,8 @@ fn rpc_url_from_cluster(api_key: &str, cluster: Cluster) -> String {
 #[derive(Clone)]
 pub struct Helius {
   api_key: String,
-  cluster: Cluster,
+  api_url: String,
+  rpc_endpoint: Url,
   rpc: Arc<RpcClient>,
   handler: RequestHandler,
 }
@@ -96,10 +96,14 @@ impl HeliusBuilder {
         .build()?,
       Some(c) => c,
     };
-
+    let api_url = String::from(match self.cluster {
+      Cluster::MainnetBeta => API_URL_V0,
+      Cluster::Devnet => DEV_API_URL_V0,
+    });
     Ok(Helius {
-      api_key: self.api_key,
-      cluster: self.cluster,
+      api_key: self.api_key.clone(),
+      api_url,
+      rpc_endpoint: Url::parse(&rpc_url_from_cluster(&self.api_key, self.cluster))?,
       rpc: Arc::new(rpc),
       handler: RequestHandler::new(client),
     })
@@ -112,26 +116,15 @@ impl Helius {
     &self.rpc
   }
 
-  fn get_url_v0(&self, method: &str) -> crate::Result<Url> {
-    let url = match self.cluster {
-      Cluster::MainnetBeta => API_URL_V0,
-      Cluster::Devnet => DEV_API_URL_V0,
-    };
-    self.make_url(url, method)
-  }
-
-  fn get_das_url(&self) -> crate::Result<Url> {
-    self.make_url(DAS_URL, "")
-  }
-
-  fn make_url(&self, base: &str, method: &str) -> crate::Result<Url> {
-    let u = format!("{base}/{method}?api-key={}", self.api_key);
+  fn make_url(&self, method: &str) -> crate::Result<Url> {
+    let u = format!("{}/{method}?api-key={}", self.api_url, self.api_key);
     Url::parse(&u).map_err(std::convert::Into::into)
   }
 }
 
 #[cfg(test)]
 mod tests {
+  use crate::api::DEV_API_URL_V0;
   use crate::Cluster::Devnet;
   use crate::HeliusBuilder;
   use std::time::Duration;
@@ -145,6 +138,6 @@ mod tests {
       .http_client(reqwest::Client::new())
       .build()
       .expect("failed to create client");
-    assert_eq!(helius.cluster, Devnet);
+    assert_eq!(helius.api_url, DEV_API_URL_V0);
   }
 }

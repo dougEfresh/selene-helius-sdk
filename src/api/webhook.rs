@@ -10,35 +10,35 @@ impl Helius {
   ///
   /// Will return `HeliusError`
   pub async fn get_all_webhooks(&self) -> Result<Vec<Webhook>> {
-    self.handler.get(self.get_url_v0(WEBHOOK_BASE)?).await
+    self.handler.get(self.make_url(WEBHOOK_BASE)?).await
   }
 
   /// # Errors
   ///
   /// Will return `HeliusError`
   pub async fn get_webhook_by_id(&self, webhook_id: &str) -> Result<Webhook> {
-    self.handler.get(self.get_url_v0(format!("{WEBHOOK_BASE}/{webhook_id}").as_str())?).await
+    self.handler.get(self.make_url(&format!("{WEBHOOK_BASE}/{webhook_id}"))?).await
   }
 
   /// # Errors
   ///
   /// Will return `HeliusError`
   pub async fn create_webhook(&self, request: &CreateWebhookRequest) -> Result<Webhook> {
-    self.handler.post(self.get_url_v0(WEBHOOK_BASE)?, request).await
+    self.handler.post(self.make_url(WEBHOOK_BASE)?, request).await
   }
 
   /// # Errors
   ///
   /// Will return `HeliusError`
   pub async fn edit_webhook(&self, request: &EditWebhookRequest) -> Result<Webhook> {
-    self.handler.put(self.get_url_v0(format!("{WEBHOOK_BASE}/{}", request.webhook_id).as_str())?, &request.data).await
+    self.handler.put(self.make_url(&format!("{WEBHOOK_BASE}/{}", request.webhook_id))?, &request.data).await
   }
 
   /// # Errors
   ///
   /// Will return `HeliusError`
   pub async fn delete_webhook(&self, webhook_id: &str) -> Result<()> {
-    self.handler.delete(self.get_url_v0(format!("{WEBHOOK_BASE}/{webhook_id}").as_str())?).await
+    self.handler.delete(self.make_url(&format!("{WEBHOOK_BASE}/{webhook_id}"))?).await
   }
 
   /// # Errors

@@ -21,12 +21,13 @@ mod tests {
   use crate::api::das::{
     DisplayOptions, GetAssetBatchParams, GetAssetParams, GetAssetProofBatchParams, GetAssetProofParams,
     GetAssetsByAuthorityParams, GetAssetsByCreatorParams, GetAssetsByGroupParams, GetAssetsByOwnerParams, Pagination,
-    SearchAssetsParams,
+    SearchAssetsParams, TokenInfo,
   };
   use crate::api::types::enhanced::ParseTransactionsRequest;
   use crate::api::types::{AccountWebhookEncoding, TokenType, TransactionType, TxnStatus};
   use crate::api::webhook::{CreateWebhookRequest, EditWebhookRequest, WebhookData, WebhookType};
   use crate::api::{Helius, HeliusBuilder};
+  use bigdecimal::{BigDecimal, Zero};
   use color_eyre::eyre::format_err;
   use solana_client::rpc_config::RpcBlockConfig;
   use solana_sdk::clock::Slot;
@@ -38,6 +39,7 @@ mod tests {
   use std::time::Duration;
   use tracing::info;
   use tracing_subscriber::EnvFilter;
+
   static INIT: Once = Once::new();
 
   fn setup() {
@@ -314,6 +316,37 @@ mod tests {
         })
         .await?;
     }
+    Ok(())
+  }
+
+  #[rstest::rstest]
+  #[tokio::test]
+  async fn search_asset_token_info(config: Config) -> color_eyre::Result<()> {
+    if config.client.is_none() {
+      return Ok(());
+    }
+    let client = config.client();
+    let rando = String::from("86xCnPeV69n6t3DnyGvkKobf9FdN2H9oiVDdaMpo2MMY");
+    let response: Vec<TokenInfo> = client
+      .search_assets(&SearchAssetsParams {
+        owner_address: Some(rando.clone()),
+        token_type: Some(TokenType::Fungible),
+        pagination: Pagination { limit: Some(100), ..Default::default() },
+        ..Default::default()
+      })
+      .await?
+      .items
+      .into_iter()
+      .filter_map(|i| i.token_info)
+      .collect();
+
+    assert!(!response.is_empty());
+    let usdc = response.into_iter().find(|t| t.symbol == "USDC");
+    assert!(usdc.is_some());
+    let usdc = usdc.unwrap();
+    assert!(usdc.price_info.total_price > BigDecimal::zero());
+    assert!(usdc.price_info.price_per_token > BigDecimal::zero());
+    assert!(usdc.balance > 0);
     Ok(())
   }
 

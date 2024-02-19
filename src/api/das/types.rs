@@ -142,7 +142,7 @@ pub struct GetAssetResponse {
   pub supply: Option<Supply>,
   pub mutable: bool,
   pub burnt: bool,
-  pub price_info: Option<PriceInfo>,
+  pub token_info: Option<TokenInfo>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Default)]
@@ -284,10 +284,11 @@ pub struct Compression {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
+#[serde(default)]
 pub struct PriceInfo {
-  price_per_token: BigDecimal,
-  total_price: BigDecimal,
-  currency: String,
+  pub price_per_token: BigDecimal,
+  pub total_price: BigDecimal,
+  pub currency: String,
 }
 
 impl Default for PriceInfo {
@@ -297,7 +298,8 @@ impl Default for PriceInfo {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Default)]
-pub struct TypeInfo {
+#[serde(default)]
+pub struct TokenInfo {
   pub symbol: String,
   pub balance: u64,
   pub supply: u64,
