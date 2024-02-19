@@ -163,7 +163,7 @@ mod tests {
       _ => return Err(format_err!("error should be TOO_MANY_REQUESTS ")),
     };
 
-    let result = RequestHandler::handle_status(path.clone(), StatusCode::IM_A_TEAPOT, body.clone());
+    let result = RequestHandler::handle_status(path, StatusCode::IM_A_TEAPOT, body);
     assert!(result.is_err());
     match result {
       Err(HeliusError::Unknown { .. }) => {},
