@@ -67,15 +67,15 @@ API reference documentation is available at [docs.helius.dev](https://docs.heliu
 |----------------------------------------------------------------------------------------------------------------------------------|---------|
 | [getAsset](https://docs.helius.dev/compression-and-das-api/digital-asset-standard-das-api/get-asset)                             | &check; |
 | [getAssetBatch](https://docs.helius.dev/compression-and-das-api/digital-asset-standard-das-api/get-asset)                        | &check; |
-| [getAssetProof](https://docs.helius.dev/compression-and-das-api/digital-asset-standard-das-api/get-asset-proof)                  | &cross; |
-| [getAssetProofBatch](https://docs.helius.dev/compression-and-das-api/digital-asset-standard-das-api/get-asset-proof)             | &cross; |
+| [getAssetProof](https://docs.helius.dev/compression-and-das-api/digital-asset-standard-das-api/get-asset-proof)                  | &check; |
+| [getAssetProofBatch](https://docs.helius.dev/compression-and-das-api/digital-asset-standard-das-api/get-asset-proof)             | &check; |
 | [getAssetsByOwner](https://docs.helius.dev/compression-and-das-api/digital-asset-standard-das-api/get-assets-by-owner)           | &check; |
 | [getAssetsByAuthority](https://docs.helius.dev/compression-and-das-api/digital-asset-standard-das-api/get-assets-by-authority)   | &check; |
 | [getAssetsByCreator](https://docs.helius.dev/compression-and-das-api/digital-asset-standard-das-api/get-assets-by-creator)       | &check; |
 | [getAssetsByGroup](https://docs.helius.dev/compression-and-das-api/digital-asset-standard-das-api/get-assets-by-group)           | &cross; |
 | [searchAssets](https://docs.helius.dev/compression-and-das-api/digital-asset-standard-das-api/search-assets)                     | &check; |
 | [getSignaturesForAsset](https://docs.helius.dev/compression-and-das-api/digital-asset-standard-das-api/get-signatures-for-asset) | &cross; |
-| [getTokenAccounts]()                                                                                                             | &cross; |
+| [getTokenAccounts](https://docs.helius.dev/compression-and-das-api/digital-asset-standard-das-api/get-token-accounts)            | &check; |
 
 ### Enriched Transactions 
 

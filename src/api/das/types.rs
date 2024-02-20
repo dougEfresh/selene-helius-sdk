@@ -162,6 +162,12 @@ pub struct DisplayOptions {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct TokenAccountDisplayOptions {
+  pub show_zero_balance: bool,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Default)]
 pub struct Ownership {
   pub frozen: bool,
   pub delegated: bool,
@@ -307,4 +313,37 @@ pub struct TokenInfo {
   pub token_program: String,
   pub associated_token_address: String,
   pub price_info: PriceInfo,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Default)]
+pub struct TokenAccount {
+  address: String,
+  mint: String,
+  owner: String,
+  amount: u64,
+  delegated_amount: u64,
+  frozen: bool,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Default)]
+pub struct GetTokenAccountsResponse {
+  pub total: u32,
+  pub limit: u32,
+  pub page: u32,
+  pub token_accounts: Vec<TokenAccount>,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct GetTokenAccountsParams {
+  pub page: u32,
+  pub limit: Option<u32>,
+  pub display_options: TokenAccountDisplayOptions,
+  pub owner: String,
+}
+
+impl Default for GetTokenAccountsParams {
+  fn default() -> Self {
+    Self { page: 1, limit: None, display_options: TokenAccountDisplayOptions::default(), owner: String::new() }
+  }
 }

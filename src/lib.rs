@@ -20,8 +20,8 @@ pub enum Cluster {
 mod tests {
   use crate::api::das::{
     DisplayOptions, GetAssetBatchParams, GetAssetParams, GetAssetProofBatchParams, GetAssetProofParams,
-    GetAssetsByAuthorityParams, GetAssetsByCreatorParams, GetAssetsByGroupParams, GetAssetsByOwnerParams, Pagination,
-    SearchAssetsParams, TokenInfo,
+    GetAssetsByAuthorityParams, GetAssetsByCreatorParams, GetAssetsByGroupParams, GetAssetsByOwnerParams,
+    GetTokenAccountsParams, Pagination, SearchAssetsParams, TokenInfo,
   };
   use crate::api::types::enhanced::ParseTransactionsRequest;
   use crate::api::types::{AccountWebhookEncoding, TokenType, TransactionType, TxnStatus};
@@ -389,6 +389,22 @@ mod tests {
     let client = config.client();
     let rando = String::from("Bu1DEKeawy7txbnCEJE4BU3BKLXaNAKCYcHR4XhndGss");
     client.get_asset_proof_batch(&GetAssetProofBatchParams { ids: vec![rando] }).await?;
+    Ok(())
+  }
+
+  #[rstest::rstest]
+  #[tokio::test]
+  async fn get_token_accounts(config: Config) -> color_eyre::Result<()> {
+    if config.client.is_none() {
+      return Ok(());
+    }
+    let client = config.client();
+    let rando = String::from("CckxW6C1CjsxYcXSiDbk7NYfPLhfqAm3kSB5LEZunnSE");
+    let token_accounts =
+      client.get_token_accounts(&GetTokenAccountsParams { owner: rando, ..Default::default() }).await?;
+    assert!(!token_accounts.token_accounts.is_empty());
+    assert!(token_accounts.total > 0);
+    assert_eq!(token_accounts.page, 1);
     Ok(())
   }
 
