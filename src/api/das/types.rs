@@ -317,12 +317,12 @@ pub struct TokenInfo {
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Default)]
 pub struct TokenAccount {
-  address: String,
-  mint: String,
-  owner: String,
-  amount: u64,
-  delegated_amount: u64,
-  frozen: bool,
+  pub address: String,
+  pub mint: String,
+  pub owner: String,
+  pub amount: u64,
+  pub delegated_amount: u64,
+  pub frozen: bool,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Default)]
