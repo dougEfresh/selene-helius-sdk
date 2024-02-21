@@ -307,8 +307,8 @@ impl Default for PriceInfo {
 #[serde(default)]
 pub struct TokenInfo {
   pub symbol: String,
-  pub balance: u64,
-  pub supply: u64,
+  pub balance: i64,
+  pub supply: i64,
   pub decimals: i32,
   pub token_program: String,
   pub associated_token_address: String,
@@ -320,8 +320,8 @@ pub struct TokenAccount {
   pub address: String,
   pub mint: String,
   pub owner: String,
-  pub amount: u64,
-  pub delegated_amount: u64,
+  pub amount: i64,
+  pub delegated_amount: i64,
   pub frozen: bool,
 }
 
