@@ -1,6 +1,6 @@
 extern crate selene_helius_sdk;
 use color_eyre::Result;
-use selene_helius_sdk::api::das::{GetAssetsByOwnerParams, Pagination};
+use selene_helius_sdk::api::das::GetAssetsByOwnerParams;
 use selene_helius_sdk::HeliusBuilder;
 use tracing_subscriber::EnvFilter;
 
@@ -20,9 +20,7 @@ async fn main() -> Result<()> {
   let result = helius
     .get_assets_by_owner(&GetAssetsByOwnerParams {
       owner_address: "86xCnPeV69n6t3DnyGvkKobf9FdN2H9oiVDdaMpo2MMY".to_string(),
-      pagination: Pagination::default(),
-      display_options: None,
-      sort_by: None,
+      ..Default::default()
     })
     .await?;
 
