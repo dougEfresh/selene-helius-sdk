@@ -1,3 +1,126 @@
+//! # Overview
+//!
+//! `once_cell` provides two new cell-like types, [`unsync::OnceCell`] and
+//! [`sync::OnceCell`]. A `OnceCell` might store arbitrary non-`Copy` types, can
+//! be assigned to at most once and provides direct access to the stored
+//! contents. The core API looks *roughly* like this (and there's much more
+//! inside, read on!):
+//!
+//! ```rust,ignore
+//! impl<T> OnceCell<T> {
+//!     const fn new() -> OnceCell<T> { ... }
+//!     fn set(&self, value: T) -> Result<(), T> { ... }
+//!     fn get(&self) -> Option<&T> { ... }
+//! }
+//! ```
+//!
+//! Note that, like with [`RefCell`] and [`Mutex`], the `set` method requires
+//! only a shared reference. Because of the single assignment restriction `get`
+//! can return a `&T` instead of `Ref<T>` or `MutexGuard<T>`.
+//!
+//! The `sync` flavor is thread-safe (that is, implements the [`Sync`] trait),
+//! while the `unsync` one is not.
+//!
+//! [`unsync::OnceCell`]: unsync/struct.OnceCell.html
+//! [`sync::OnceCell`]: sync/struct.OnceCell.html
+//! [`RefCell`]: https://doc.rust-lang.org/std/cell/struct.RefCell.html
+//! [`Mutex`]: https://doc.rust-lang.org/std/sync/struct.Mutex.html
+//! [`Sync`]: https://doc.rust-lang.org/std/marker/trait.Sync.html
+//!
+//! # Recipes
+//!
+//! `OnceCell` might be useful for a variety of patterns.
+//!
+//! ## Safe Initialization of Global Data
+//!
+//! ```rust
+//! use std::{env, io};
+//!
+//! use once_cell::sync::OnceCell;
+//!
+//! #[derive(Debug)]
+//! pub struct Logger {
+//!     // ...
+//! }
+//! static INSTANCE: OnceCell<Logger> = OnceCell::new();
+//!
+//! impl Logger {
+//!     pub fn global() -> &'static Logger {
+//!         INSTANCE.get().expect("logger is not initialized")
+//!     }
+//!
+//!     fn from_cli(args: env::Args) -> Result<Logger, std::io::Error> {
+//!        // ...
+//! #      Ok(Logger {})
+//!     }
+//! }
+//!
+//! fn main() {
+//!     let logger = Logger::from_cli(env::args()).unwrap();
+//!     INSTANCE.set(logger).unwrap();
+//!     // use `Logger::global()` from now on
+//! }
+//! ```
+//!
+//! ## Lazy Initialized Global Data
+//!
+//! This is essentially the `lazy_static!` macro, but without a macro.
+//!
+//! ```rust
+//! use std::{sync::Mutex, collections::HashMap};
+//!
+//! use once_cell::sync::OnceCell;
+//!
+//! fn global_data() -> &'static Mutex<HashMap<i32, String>> {
+//!     static INSTANCE: OnceCell<Mutex<HashMap<i32, String>>> = OnceCell::new();
+//!     INSTANCE.get_or_init(|| {
+//!         let mut m = HashMap::new();
+//!         m.insert(13, "Spica".to_string());
+//!         m.insert(74, "Hoyten".to_string());
+//!         Mutex::new(m)
+//!     })
+//! }
+//! ```
+//!
+//! There are also the [`sync::Lazy`] and [`unsync::Lazy`] convenience types to
+//! streamline this pattern:
+//!
+//! ```rust
+//! use std::{sync::Mutex, collections::HashMap};
+//! use once_cell::sync::Lazy;
+//!
+//! static GLOBAL_DATA: Lazy<Mutex<HashMap<i32, String>>> = Lazy::new(|| {
+//!     let mut m = HashMap::new();
+//!     m.insert(13, "Spica".to_string());
+//!     m.insert(74, "Hoyten".to_string());
+//!     Mutex::new(m)
+//! });
+//!
+//! fn main() {
+//!     println!("{:?}", GLOBAL_DATA.lock().unwrap());
+//! }
+//! ```
+//!
+//! Note that the variable that holds `Lazy` is declared as `static`, *not*
+//! `const`. This is important: using `const` instead compiles, but works wrong.
+//!
+//! [`sync::Lazy`]: sync/struct.Lazy.html
+//! [`unsync::Lazy`]: unsync/struct.Lazy.html
+//!
+//! ## General purpose lazy evaluation
+//!
+//! Unlike `lazy_static!`, `Lazy` works with local variables.
+//!
+//! ```rust
+//! use once_cell::unsync::Lazy;
+//!
+//! fn main() {
+//!     let ctx = vec![1, 2, 3];
+//!     let thunk = Lazy::new(|| {
+//!         ctx.iter().sum::<i32>()
+//!     });
+//!     assert_eq!(*thunk, 6);
+//! }
 pub mod api;
 pub mod error;
 mod request_handler;
