@@ -1,9 +1,10 @@
 [package]
 name = "selene-helius-sdk"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["dougefresh <dchimento@gmail.com>"]
 description = "Rust implementation of the Helius API & RPC"
+documentation = "https://docs.rs/ratatui/latest/ratatui/"
 readme = "README.md"
 repository = "https://github.com/dougEfresh/selene-helius-sdk"
 homepage = "https://github.com/dougEfresh/selene-helius-sdk"
@@ -20,7 +21,6 @@ exclude = [
   ".dockerignore",
   "codecov.yml"
 ]
-rust-version = "1.76.0"
 
 
 [lib]
