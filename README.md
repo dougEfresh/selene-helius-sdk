@@ -24,7 +24,7 @@ Async library for [helius](https://docs.helius.dev/) API & RPC
 
 ```rust
 use color_eyre::Result;
-use selene_helius_sdk::api::das::{GetAssetsByOwnerParams, Supply};
+use selene_helius_sdk::api::das::GetAssetsByOwnerParams;
 use selene_helius_sdk::HeliusBuilder;
 
 #[tokio::main]
@@ -34,9 +34,7 @@ async fn main() -> Result<()> {
   let result = helius
     .get_assets_by_owner(&GetAssetsByOwnerParams {
       owner_address: "86xCnPeV69n6t3DnyGvkKobf9FdN2H9oiVDdaMpo2MMY".to_string(),
-      pagination: Default::default(),
-      display_options: None,
-      sort_by: None,
+      ..Default::default()
     })
     .await?;
 
@@ -53,7 +51,7 @@ async fn main() -> Result<()> {
 
 ## Usage
 
-The package needs to be configured with your account's API key, which is available in the [Helius Dashboard](https://dev.helius.xyz/dashboard/app). 
+The package needs to be configured with your account's API key, which is available in the [Helius Dashboard](https://dev.helius.xyz/dashboard/app).
 
 API reference documentation is available at [docs.helius.dev](https://docs.helius.dev).
 

@@ -1,126 +1,81 @@
 //! # Overview
 //!
-//! `once_cell` provides two new cell-like types, [`unsync::OnceCell`] and
-//! [`sync::OnceCell`]. A `OnceCell` might store arbitrary non-`Copy` types, can
-//! be assigned to at most once and provides direct access to the stored
-//! contents. The core API looks *roughly* like this (and there's much more
-//! inside, read on!):
-//!
-//! ```rust,ignore
-//! impl<T> OnceCell<T> {
-//!     const fn new() -> OnceCell<T> { ... }
-//!     fn set(&self, value: T) -> Result<(), T> { ... }
-//!     fn get(&self) -> Option<&T> { ... }
-//! }
-//! ```
-//!
-//! Note that, like with [`RefCell`] and [`Mutex`], the `set` method requires
-//! only a shared reference. Because of the single assignment restriction `get`
-//! can return a `&T` instead of `Ref<T>` or `MutexGuard<T>`.
-//!
-//! The `sync` flavor is thread-safe (that is, implements the [`Sync`] trait),
-//! while the `unsync` one is not.
-//!
-//! [`unsync::OnceCell`]: unsync/struct.OnceCell.html
-//! [`sync::OnceCell`]: sync/struct.OnceCell.html
-//! [`RefCell`]: https://doc.rust-lang.org/std/cell/struct.RefCell.html
-//! [`Mutex`]: https://doc.rust-lang.org/std/sync/struct.Mutex.html
-//! [`Sync`]: https://doc.rust-lang.org/std/marker/trait.Sync.html
-//!
-//! # Recipes
-//!
-//! `OnceCell` might be useful for a variety of patterns.
-//!
-//! ## Safe Initialization of Global Data
+//! `selene_helius_sdk` is a async library for the Helius [SDK](https://docs.helius.dev/)
 //!
 //! ```rust
-//! use std::{env, io};
+//! use color_eyre::Result;
+//! use selene_helius_sdk::api::das::GetAssetsByOwnerParams;
+//! use selene_helius_sdk::HeliusBuilder;
 //!
-//! use once_cell::sync::OnceCell;
-//!
-//! #[derive(Debug)]
-//! pub struct Logger {
-//!     // ...
-//! }
-//! static INSTANCE: OnceCell<Logger> = OnceCell::new();
-//!
-//! impl Logger {
-//!     pub fn global() -> &'static Logger {
-//!         INSTANCE.get().expect("logger is not initialized")
-//!     }
-//!
-//!     fn from_cli(args: env::Args) -> Result<Logger, std::io::Error> {
-//!        // ...
-//! #      Ok(Logger {})
-//!     }
-//! }
-//!
-//! fn main() {
-//!     let logger = Logger::from_cli(env::args()).unwrap();
-//!     INSTANCE.set(logger).unwrap();
-//!     // use `Logger::global()` from now on
-//! }
-//! ```
-//!
-//! ## Lazy Initialized Global Data
-//!
-//! This is essentially the `lazy_static!` macro, but without a macro.
-//!
-//! ```rust
-//! use std::{sync::Mutex, collections::HashMap};
-//!
-//! use once_cell::sync::OnceCell;
-//!
-//! fn global_data() -> &'static Mutex<HashMap<i32, String>> {
-//!     static INSTANCE: OnceCell<Mutex<HashMap<i32, String>>> = OnceCell::new();
-//!     INSTANCE.get_or_init(|| {
-//!         let mut m = HashMap::new();
-//!         m.insert(13, "Spica".to_string());
-//!         m.insert(74, "Hoyten".to_string());
-//!         Mutex::new(m)
+//! #[tokio::main]
+//! async fn main() -> Result<()> {
+//!   let api_key = std::env::var("HELIUS_API_KEY").expect("env HELIUS_API_KEY is not defined!");
+//!   let helius = HeliusBuilder::new(&api_key).build()?;
+//!   let result = helius
+//!    .get_assets_by_owner(&GetAssetsByOwnerParams {
+//!       owner_address: "86xCnPeV69n6t3DnyGvkKobf9FdN2H9oiVDdaMpo2MMY".to_string(),
+//!       ..Default::default()
 //!     })
+//!     .await?;
+//!
+//!   println!("total: {}", result.total);
+//!   for asset in result.items {
+//!     println!("{}", asset.id);
+//!   }
+//!
+//!   Ok(())
 //! }
 //! ```
 //!
-//! There are also the [`sync::Lazy`] and [`unsync::Lazy`] convenience types to
-//! streamline this pattern:
+//! Note the package needs to be configured with your account's API key, which is available in
+//! the [Helius Dashboard](https://dev.helius.xyz/dashboard/app).
 //!
-//! ```rust
-//! use std::{sync::Mutex, collections::HashMap};
-//! use once_cell::sync::Lazy;
+//! See [`HeliusBuilder`] for other option such as timeouts and providing your own http client
 //!
-//! static GLOBAL_DATA: Lazy<Mutex<HashMap<i32, String>>> = Lazy::new(|| {
-//!     let mut m = HashMap::new();
-//!     m.insert(13, "Spica".to_string());
-//!     m.insert(74, "Hoyten".to_string());
-//!     Mutex::new(m)
-//! });
+//! # Supported APIs
 //!
-//! fn main() {
-//!     println!("{:?}", GLOBAL_DATA.lock().unwrap());
-//! }
-//! ```
+//!## DAS API Status
 //!
-//! Note that the variable that holds `Lazy` is declared as `static`, *not*
-//! `const`. This is important: using `const` instead compiles, but works wrong.
+//! | Endpoint                                                                                                                         | Status  |
+//! |----------------------------------------------------------------------------------------------------------------------------------|---------|
+//! | [getAsset](https://docs.helius.dev/compression-and-das-api/digital-asset-standard-das-api/get-asset)                             | &check; |
+//! | [getAssetBatch](https://docs.helius.dev/compression-and-das-api/digital-asset-standard-das-api/get-asset)                        | &check; |
+//! | [getAssetProof](https://docs.helius.dev/compression-and-das-api/digital-asset-standard-das-api/get-asset-proof)                  | &check; |
+//! | [getAssetProofBatch](https://docs.helius.dev/compression-and-das-api/digital-asset-standard-das-api/get-asset-proof)             | &check; |
+//! | [getAssetsByOwner](https://docs.helius.dev/compression-and-das-api/digital-asset-standard-das-api/get-assets-by-owner)           | &check; |
+//! | [getAssetsByAuthority](https://docs.helius.dev/compression-and-das-api/digital-asset-standard-das-api/get-assets-by-authority)   | &check; |
+//! | [getAssetsByCreator](https://docs.helius.dev/compression-and-das-api/digital-asset-standard-das-api/get-assets-by-creator)       | &check; |
+//! | [getAssetsByGroup](https://docs.helius.dev/compression-and-das-api/digital-asset-standard-das-api/get-assets-by-group)           | &cross; |
+//! | [searchAssets](https://docs.helius.dev/compression-and-das-api/digital-asset-standard-das-api/search-assets)                     | &check; |
+//! | [getSignaturesForAsset](https://docs.helius.dev/compression-and-das-api/digital-asset-standard-das-api/get-signatures-for-asset) | &cross; |
+//! | [getTokenAccounts](https://docs.helius.dev/compression-and-das-api/digital-asset-standard-das-api/get-token-accounts)            | &check; |
 //!
-//! [`sync::Lazy`]: sync/struct.Lazy.html
-//! [`unsync::Lazy`]: unsync/struct.Lazy.html
+//! ### Enriched Transactions
 //!
-//! ## General purpose lazy evaluation
+//! | Endpoint                                                                                            | Status  |
+//! |-----------------------------------------------------------------------------------------------------|---------|
+//! | [transactions](https://docs.helius.dev/solana-apis/enhanced-transactions-api/parse-transaction-s)   | &check; |
+//! | [history](https://docs.helius.dev/solana-apis/enhanced-transactions-api/parsed-transaction-history) | &cross; |
 //!
-//! Unlike `lazy_static!`, `Lazy` works with local variables.
+//! ### Webhooks API Status
+//! | Endpoint                                                                                           | Status  |
+//! |----------------------------------------------------------------------------------------------------|---------|
+//! | [create-webhook](https://docs.helius.dev/webhooks-and-websockets/api-reference/create-webhook)     | &check; |
+//! | [get-all-webhooks](https://docs.helius.dev/webhooks-and-websockets/api-reference/get-all-webhooks) | &check; |
+//! | [get-webhook](https://docs.helius.dev/webhooks-and-websockets/api-reference/get-webhook)           | &check; |
+//! | [edit-webhook](https://docs.helius.dev/webhooks-and-websockets/api-reference/edit-webhook)         | &check; |
+//! | [delete-webhook](https://docs.helius.dev/webhooks-and-websockets/api-reference/delete-webhook)     | &check; |
+//! | [appendAddressesToWebhook](https://docs.helius.dev/webhooks-and-websockets)                        | &check; |
 //!
-//! ```rust
-//! use once_cell::unsync::Lazy;
 //!
-//! fn main() {
-//!     let ctx = vec![1, 2, 3];
-//!     let thunk = Lazy::new(|| {
-//!         ctx.iter().sum::<i32>()
-//!     });
-//!     assert_eq!(*thunk, 6);
-//! }
+//! ### Mint API
+//!
+//! | Endpoint                                                                                          | Status  |
+//! |---------------------------------------------------------------------------------------------------|---------|
+//! | [mintCompressedNft](https://docs.helius.dev/webhooks-and-websockets/api-reference/create-webhook) | &cross; |
+//! | [delegateCollectionAuthority](https://docs.helius.dev/compression-and-das-api/mint-api)           | &cross; |
+//! | [revokeCollectionAuthority()](https://docs.helius.dev/compression-and-das-api/mint-api)           | &cross; |
+//! | [getMintlist](https://docs.helius.dev/compression-and-das-api/mint-api)                           | &cross; |
 pub mod api;
 pub mod error;
 mod request_handler;

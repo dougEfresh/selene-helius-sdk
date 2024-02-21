@@ -33,6 +33,20 @@ pub struct Helius {
   handler: RequestHandler,
 }
 
+/// A helper builder to configure your helius client
+/// `HeliusBuilder` requires an api key from [https://dev.helius.xyz/dashboard/app](https://dev.helius.xyz/dashboard/app)
+///
+/// # Example
+///```rust
+/// use std::time::Duration;
+/// let helius = selene_helius_sdk::HeliusBuilder::new("something")
+///       .cluster(selene_helius_sdk::Cluster::Devnet)
+///       .connect_timeout(Duration::from_secs(1))
+///       .timeout(Duration::from_secs(1))
+///       .http_client(reqwest::Client::new())
+///       .build()
+///       .expect("failed to create client");
+/// ```
 pub struct HeliusBuilder {
   api_key: String,
   cluster: Cluster,
