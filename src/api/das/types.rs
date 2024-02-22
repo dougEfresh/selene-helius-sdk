@@ -24,7 +24,6 @@ impl Default for Pagination {
 pub struct SearchAssetsParams {
   #[serde(flatten)]
   pub pagination: Pagination,
-  pub display_options: Option<DisplayOptions>,
   pub sort_by: Option<AssetSortingRequest>,
   pub creator_address: Option<String>,
   pub owner_address: Option<String>,
