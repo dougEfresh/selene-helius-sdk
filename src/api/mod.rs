@@ -24,6 +24,7 @@ fn rpc_url_from_cluster(api_key: &str, cluster: Cluster) -> String {
   }
 }
 
+/// See [`HeliusBuilder`] to initialize this struct
 #[derive(Clone)]
 pub struct Helius {
   api_key: String,
@@ -33,7 +34,7 @@ pub struct Helius {
   handler: RequestHandler,
 }
 
-/// A helper builder to configure your helius client
+/// A builder to configure your [`Helius`] client
 /// `HeliusBuilder` requires an api key from [https://dev.helius.xyz/dashboard/app](https://dev.helius.xyz/dashboard/app)
 ///
 /// # Example
@@ -47,6 +48,7 @@ pub struct Helius {
 ///       .build()
 ///       .expect("failed to create client");
 /// ```
+/// See also [`solana_client::nonblocking::rpc_client::RpcClient`] and [`solana_client::nonblocking::rpc_client::RpcClient::new_with_timeout_and_commitment`]
 pub struct HeliusBuilder {
   api_key: String,
   cluster: Cluster,
