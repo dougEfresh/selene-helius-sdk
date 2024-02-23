@@ -8,6 +8,7 @@ documentation = "https://docs.rs/ratatui/latest/ratatui/"
 readme = "README.md"
 repository = "https://github.com/dougEfresh/selene-helius-sdk"
 homepage = "https://github.com/dougEfresh/selene-helius-sdk"
+documentation = "https://docs.rs/selene-helius-sdk/0.1.0/selene_helius_sdk/"
 license = "MIT"
 keywords = ["solana", "helius"]
 categories = ["cryptography::cryptocurrencies"]
@@ -42,8 +43,8 @@ missing_const_for_fn = "allow"
 
 
 [dependencies]
-solana-client = { version = "1"  }
-solana-sdk = { version = "1" }
+solana-client = { version = ">= 1.16"  }
+solana-sdk = { version = ">= 1.16" }
 reqwest = {version = "0.11", features = [ "json"] }
 serde-enum-str = "0.4"
 serde_json = "1"
@@ -57,7 +58,7 @@ tracing = {  version = "0.1" }
 tracing-log = {version = "0.2" }
 tracing-error = { version = "0.2" }
 tracing-subscriber = { version = "0.3", features = ["env-filter", "serde"] }
-bigdecimal = {  version = "^0.3.0", features = ["serde"] }
+bigdecimal = {  version = "^0.3", features = ["serde"] }
 
 [dev-dependencies]
 dotenvy = "0.15"

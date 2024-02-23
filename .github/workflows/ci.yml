@@ -100,16 +100,3 @@ jobs:
       - name: rustdoc
         run: |
           cargo doc
-
-  build-bot:
-    name: bot
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Cache Dependencies
-        uses: Swatinem/rust-cache@v2
-      - name: Compile
-        run: |
-          cd bot && cargo clippy && cargo build
-

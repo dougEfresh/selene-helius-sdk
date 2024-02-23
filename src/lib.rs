@@ -1,3 +1,37 @@
+//! # Overview
+//!
+//! `selene_helius_sdk` is a async library for the Helius [SDK](https://docs.helius.dev/)
+//!
+//! ```rust
+//! use color_eyre::Result;
+//! use selene_helius_sdk::api::das::GetAssetsByOwnerParams;
+//! use selene_helius_sdk::HeliusBuilder;
+//!
+//! #[tokio::main]
+//! async fn main() -> Result<()> {
+//!   let api_key = std::env::var("HELIUS_API_KEY").expect("env HELIUS_API_KEY is not defined!");
+//!   let helius = HeliusBuilder::new(&api_key).build()?;
+//!   let result = helius
+//!    .get_assets_by_owner(&GetAssetsByOwnerParams {
+//!       owner_address: "86xCnPeV69n6t3DnyGvkKobf9FdN2H9oiVDdaMpo2MMY".to_string(),
+//!       ..Default::default()
+//!     })
+//!     .await?;
+//!
+//!   println!("total: {}", result.total);
+//!   for asset in result.items {
+//!     println!("{}", asset.id);
+//!   }
+//!
+//!   Ok(())
+//! }
+//! ```
+//!
+//! Note the package needs to be configured with your account's API key, which is available in
+//! the [Helius Dashboard](https://dev.helius.xyz/dashboard/app).
+//!
+//! See [`HeliusBuilder`] for other option such as timeouts and providing your own http client
+//!
 pub mod api;
 pub mod error;
 mod request_handler;
@@ -35,20 +69,33 @@ mod tests {
   use solana_sdk::transaction::VersionedTransaction;
   use solana_transaction_status::UiTransactionEncoding;
   use std::env;
-  use std::sync::Once;
-  use std::time::Duration;
+  use std::sync::{Once, OnceLock};
   use tracing::info;
   use tracing_subscriber::EnvFilter;
 
   static INIT: Once = Once::new();
+  static CLIENT: OnceLock<reqwest::Client> = OnceLock::new();
+  static HELIUS: OnceLock<Helius> = OnceLock::new();
 
+  #[allow(clippy::unwrap_used)]
   fn setup() {
     INIT.call_once(|| {
-      #[allow(clippy::unwrap_used)]
       color_eyre::install().unwrap();
+      CLIENT.set(reqwest::Client::new()).unwrap();
       let filter = EnvFilter::from_default_env();
       let subscriber = tracing_subscriber::FmtSubscriber::builder().with_env_filter(filter).with_target(true).finish();
       tracing::subscriber::set_global_default(subscriber).expect("setting default subscriber failed");
+
+      let env = dotenvy::dotenv();
+      if env.is_err() {
+        info!("no .env file");
+      }
+      let key: Option<String> = env::var("HELIUS_API_KEY").ok();
+      let client: Option<Helius> =
+        key.map(|k| HeliusBuilder::new(&k).http_client(CLIENT.get().unwrap().clone()).build().unwrap());
+      if let Some(client) = client {
+        let _ = HELIUS.set(client);
+      }
     });
   }
 
@@ -69,13 +116,7 @@ mod tests {
     }
 
     pub fn new() -> Self {
-      let env = dotenvy::dotenv();
-      if env.is_err() {
-        info!("no .env file");
-      }
-      let key: Option<String> = env::var("HELIUS_API_KEY").ok();
-      let client: Option<Helius> =
-        key.map(|k| HeliusBuilder::new(&k).timeout(Duration::from_secs(15)).build().unwrap());
+      let client = HELIUS.get().map_or_else(|| None, |h| Some(h.clone()));
       Self { client }
     }
   }
