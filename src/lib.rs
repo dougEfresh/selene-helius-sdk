@@ -348,7 +348,7 @@ mod tests {
     let types: Vec<TokenType> =
       vec![TokenType::All, TokenType::CompressedNft, TokenType::NonFungible, TokenType::RegularNft];
     for t in types {
-      client
+      let r = client
         .search_assets(&SearchAssetsParams {
           owner_address: Some(rando.clone()),
           token_type: Some(t),
@@ -356,6 +356,7 @@ mod tests {
           ..Default::default()
         })
         .await?;
+      assert!(!r.items.is_empty());
     }
     Ok(())
   }
