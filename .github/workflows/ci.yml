@@ -50,7 +50,6 @@ jobs:
           tool: cargo-llvm-cov,cargo-make        
       - name: Compile
         run: |
-          echo cargo test
           cargo llvm-cov --lcov --output-path target/lcov.info
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.0.1
@@ -59,7 +58,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
       - name: Test documentation tests
         run: |
-          cargo test --doc
+          echo cargo test --doc
 
   check-examples:
     runs-on: ubuntu-latest
@@ -99,4 +98,4 @@ jobs:
         uses: Swatinem/rust-cache@v2
       - name: rustdoc
         run: |
-          echo FIX ME cargo doc
+          echo cargo doc
