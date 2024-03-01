@@ -338,11 +338,14 @@ pub struct GetTokenAccountsParams {
   pub page: u32,
   pub limit: Option<u32>,
   pub display_options: TokenAccountDisplayOptions,
-  pub owner: String,
+  #[serde(skip_serializing_if = "Option::is_none")]
+  pub owner: Option<String>,
+  #[serde(skip_serializing_if = "Option::is_none")]
+  pub mint: Option<String>,
 }
 
 impl Default for GetTokenAccountsParams {
   fn default() -> Self {
-    Self { page: 1, limit: None, display_options: TokenAccountDisplayOptions::default(), owner: String::new() }
+    Self { page: 1, limit: None, display_options: TokenAccountDisplayOptions::default(), owner: None, mint: None }
   }
 }
