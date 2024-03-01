@@ -436,14 +436,30 @@ mod tests {
 
   #[rstest::rstest]
   #[tokio::test]
-  async fn get_token_accounts(config: Config) -> color_eyre::Result<()> {
+  async fn get_token_accounts_owner(config: Config) -> color_eyre::Result<()> {
     if config.client.is_none() {
       return Ok(());
     }
     let client = config.client();
     let rando = String::from("CckxW6C1CjsxYcXSiDbk7NYfPLhfqAm3kSB5LEZunnSE");
     let token_accounts =
-      client.get_token_accounts(&GetTokenAccountsParams { owner: rando, ..Default::default() }).await?;
+      client.get_token_accounts(&GetTokenAccountsParams { owner: Some(rando), ..Default::default() }).await?;
+    assert!(!token_accounts.token_accounts.is_empty());
+    assert!(token_accounts.total > 0);
+    assert_eq!(token_accounts.page, 1);
+    Ok(())
+  }
+
+  #[rstest::rstest]
+  #[tokio::test]
+  async fn get_token_accounts_mint(config: Config) -> color_eyre::Result<()> {
+    if config.client.is_none() {
+      return Ok(());
+    }
+    let client = config.client();
+    let rando = String::from("2zXJViuAwRbxQTY6F7xdv35FKyW8aUH1ds85E4LDLFQV");
+    let token_accounts =
+      client.get_token_accounts(&GetTokenAccountsParams { mint: Some(rando), ..Default::default() }).await?;
     assert!(!token_accounts.token_accounts.is_empty());
     assert!(token_accounts.total > 0);
     assert_eq!(token_accounts.page, 1);
