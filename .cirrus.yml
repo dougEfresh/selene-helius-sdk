@@ -2,6 +2,8 @@ container:
   image: rust:latest
 
 test_task:
+  environment:
+    HELIUS_API_KEY: ENCRYPTED[7e79c9a3183567584ecc68c6ef98f4a29d98b82c8f820957553960a540be39f0512a1da1ae28c6bf52323bb95daa7538]
   registry_cache:
     folder: $CARGO_HOME/registry
     fingerprint_script: cat Cargo.toml
