@@ -26,7 +26,7 @@ async fn main() -> Result<()> {
 
   println!("total: {}", result.total);
   for asset in result.items {
-    println!("{}", asset.id);
+    println!("{}\t{}", asset.id, asset.interface);
   }
 
   Ok(())
