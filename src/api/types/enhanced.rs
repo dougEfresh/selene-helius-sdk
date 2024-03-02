@@ -20,6 +20,7 @@ pub struct EnhancedTransaction {
   pub transaction_error: Option<TransactionError>,
   pub instructions: Vec<Instruction>,
   pub events: TransactionEvent,
+  pub timestamp: u64,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
