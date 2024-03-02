@@ -151,7 +151,7 @@ pub enum AccountWebhookEncoding {
   Other(String),
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize, Default)]
+#[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize, Default)]
 #[serde(rename_all = "lowercase")]
 pub enum TxnStatus {
   #[default]
@@ -160,7 +160,7 @@ pub enum TxnStatus {
   Failed,
 }
 
-#[derive(Clone, Debug, Deserialize_enum_str, Serialize_enum_str)]
+#[derive(Clone, Debug, Eq, PartialEq, Deserialize_enum_str, Serialize_enum_str)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum TransactionContext {
   Auction,
@@ -173,7 +173,7 @@ pub enum TransactionContext {
   Other(String),
 }
 
-#[derive(Clone, Debug, Deserialize_enum_str, Serialize_enum_str)]
+#[derive(Clone, Debug, Eq, PartialEq, Deserialize_enum_str, Serialize_enum_str)]
 pub enum TokenStandard {
   ProgrammableNonFungible,
   NonFungible,
@@ -185,7 +185,7 @@ pub enum TokenStandard {
   Other(String),
 }
 
-#[derive(Clone, Debug, Deserialize_enum_str, Serialize_enum_str)]
+#[derive(Clone, Debug, Eq, PartialEq, Deserialize_enum_str, Serialize_enum_str)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum ProgramName {
   Unkown,
@@ -239,7 +239,7 @@ pub enum ProgramName {
   Other(String),
 }
 
-#[derive(Clone, Debug, Deserialize_enum_str, Serialize_enum_str)]
+#[derive(Clone, Debug, Eq, PartialEq, Deserialize_enum_str, Serialize_enum_str)]
 #[allow(non_camel_case_types, clippy::upper_case_acronyms)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum Source {
@@ -332,7 +332,7 @@ pub enum Source {
   Other(String),
 }
 
-#[derive(Clone, Debug, Deserialize_enum_str, Serialize_enum_str)]
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize_enum_str, Serialize_enum_str)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum TransactionType {
   AcceptEscrowArtist,

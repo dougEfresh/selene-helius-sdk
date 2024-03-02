@@ -26,7 +26,7 @@ pub struct WebhookData {
   pub encoding: AccountWebhookEncoding,
 }
 
-#[derive(Deserialize, Serialize, Clone, Debug, Default)]
+#[derive(Deserialize, Serialize, Eq, PartialEq, Clone, Debug, Default)]
 pub enum WebhookType {
   #[serde(rename = "enhanced")]
   #[default]
