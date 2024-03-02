@@ -158,6 +158,7 @@ mod tests {
     let sigs = ParseTransactionsRequest::from_slice(&sigs);
     let res = client.parse_transaction(&sigs[0]).await?;
     assert!(!res.is_empty());
+    assert!(res[0].timestamp > 0);
     Ok(())
   }
 
