@@ -22,7 +22,9 @@ pub struct WebhookData {
   pub webhook_type: WebhookType,
   #[serde(skip_serializing_if = "Option::is_none")]
   pub auth_header: Option<String>,
+  #[serde(default)]
   pub txn_status: TxnStatus,
+  #[serde(default)]
   pub encoding: AccountWebhookEncoding,
 }
 
