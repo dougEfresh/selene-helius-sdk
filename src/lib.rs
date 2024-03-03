@@ -159,6 +159,10 @@ mod tests {
     let res = client.parse_transaction(&sigs[0]).await?;
     assert!(!res.is_empty());
     assert!(res[0].timestamp > 0);
+
+    let res = client.parsed_transaction_history("M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K").await?;
+    assert!(!res.is_empty());
+    assert!(res[0].timestamp > 0);
     Ok(())
   }
 
