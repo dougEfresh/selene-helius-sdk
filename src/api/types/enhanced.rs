@@ -234,6 +234,6 @@ pub struct Authority {
   pub account: String,
   pub from: String,
   pub to: String,
-  pub instruction_index: i32,
-  pub inner_instruction_index: i32,
+  pub instruction_index:Option<i32>,
+  pub inner_instruction_index: Option<i32>,
 }
