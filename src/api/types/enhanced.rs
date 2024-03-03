@@ -54,7 +54,7 @@ pub struct CompressedNftEvent {
   pub tree_id: String,
   pub leaf_index: Option<i32>,
   pub seq: Option<i32>,
-  pub asset_id: String,
+  pub asset_id: Option<String>,
   pub instruction_index: Option<i32>,
   pub inner_instruction_index: Option<i32>,
   pub new_leaf_owner: Option<String>,
