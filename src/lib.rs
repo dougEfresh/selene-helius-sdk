@@ -159,7 +159,17 @@ mod tests {
     let res = client.parse_transaction(&sigs[0]).await?;
     assert!(!res.is_empty());
     assert!(res[0].timestamp > 0);
+    Ok(())
+  }
 
+  #[rstest::rstest]
+  #[tokio::test]
+  #[allow(clippy::unwrap_used)]
+  async fn test_enhanced_history_txn(config: Config) -> color_eyre::Result<()> {
+    if config.client.is_none() {
+      return Ok(());
+    }
+    let client = config.client();
     let res = client.parsed_transaction_history("M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K").await?;
     assert!(!res.is_empty());
     assert!(res[0].timestamp > 0);
