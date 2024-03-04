@@ -37,12 +37,13 @@ impl ParseTransactionsRequest {
   }
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct TransactionEvent {
   pub nft: Option<NFTEvent>,
   pub swap: Option<SwapEvent>,
-  pub compressed: Option<CompressedNftEvent>,
+  pub compressed: Option<Vec<CompressedNftEvent>>,
+  pub set_authority: Option<Vec<Authority>>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -51,13 +52,18 @@ pub struct CompressedNftEvent {
   #[serde(rename = "type")]
   pub transaction_type: TransactionType,
   pub tree_id: String,
-  pub leaf_index: Option<Number>,
-  pub seq: Option<Number>,
+  pub leaf_index: Option<i32>,
+  pub seq: Option<i32>,
   pub asset_id: Option<String>,
-  pub instruction_index: Option<Number>,
-  pub inner_instruction_index: Option<Number>,
+  pub instruction_index: Option<i32>,
+  pub inner_instruction_index: Option<i32>,
   pub new_leaf_owner: Option<String>,
   pub old_leaf_owner: Option<String>,
+  pub new_leaf_delegate: Option<String>,
+  pub old_leaf_delegate: Option<serde_json::Value>,
+  pub tree_delegate: Option<String>,
+  pub metadata: Option<Metadata>,
+  pub update_args: Option<serde_json::Value>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -197,4 +203,37 @@ pub struct InnerInstruction {
   pub accounts: Vec<String>,
   pub data: String,
   pub program_id: String,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Collection {
+  pub key: String,
+  pub verified: bool,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct Metadata {
+  pub name: String,
+  pub symbol: String,
+  pub uri: String,
+  pub seller_fee_basis_points: i32,
+  pub primary_sale_happened: bool,
+  #[serde(rename = "isMutable")]
+  pub mutable: bool,
+  pub edition_nonce: Option<i32>,
+  pub token_standard: Option<String>,
+  pub collection: Option<Collection>,
+  pub token_program_version: String,
+  pub creators: Option<Vec<serde_json::Value>>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct Authority {
+  pub account: String,
+  pub from: String,
+  pub to: String,
+  pub instruction_index: Option<i32>,
+  pub inner_instruction_index: Option<i32>,
 }

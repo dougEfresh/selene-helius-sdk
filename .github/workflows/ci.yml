@@ -47,7 +47,7 @@ jobs:
       - name: Install cargo-llvm-cov and cargo-make
         uses: taiki-e/install-action@v2
         with:
-          tool: cargo-llvm-cov,cargo-make        
+          tool: cargo-llvm-cov,cargo-make
       - name: Compile
         run: |
           cargo llvm-cov --lcov --output-path target/lcov.info
@@ -58,7 +58,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
       - name: Test documentation tests
         run: |
-          echo cargo test --doc
+          cargo test --doc
 
   check-examples:
     runs-on: ubuntu-latest
@@ -66,10 +66,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-#      - name: Install Rust stable
-#        uses: dtolnay/rust-toolchain@master
-#        with:
-#          toolchain: stable
       - name: Cache Dependencies
         uses: Swatinem/rust-cache@v2
       - name: Check examples
@@ -98,4 +94,4 @@ jobs:
         uses: Swatinem/rust-cache@v2
       - name: rustdoc
         run: |
-          echo cargo doc
+          cargo doc
