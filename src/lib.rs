@@ -69,33 +69,19 @@ mod tests {
   use solana_sdk::transaction::VersionedTransaction;
   use solana_transaction_status::UiTransactionEncoding;
   use std::env;
-  use std::sync::{Once, OnceLock};
+  use std::sync::Once;
   use tracing::info;
   use tracing_subscriber::EnvFilter;
 
   static INIT: Once = Once::new();
-  static CLIENT: OnceLock<reqwest::Client> = OnceLock::new();
-  static HELIUS: OnceLock<Helius> = OnceLock::new();
 
   #[allow(clippy::unwrap_used)]
   fn setup() {
     INIT.call_once(|| {
       color_eyre::install().unwrap();
-      CLIENT.set(reqwest::Client::new()).unwrap();
       let filter = EnvFilter::from_default_env();
       let subscriber = tracing_subscriber::FmtSubscriber::builder().with_env_filter(filter).with_target(true).finish();
       tracing::subscriber::set_global_default(subscriber).expect("setting default subscriber failed");
-
-      let env = dotenvy::dotenv();
-      if env.is_err() {
-        info!("no .env file");
-      }
-      let key: Option<String> = env::var("HELIUS_API_KEY").ok();
-      let client: Option<Helius> =
-        key.map(|k| HeliusBuilder::new(&k).http_client(CLIENT.get().unwrap().clone()).build().unwrap());
-      if let Some(client) = client {
-        let _ = HELIUS.set(client);
-      }
     });
   }
 
@@ -116,7 +102,15 @@ mod tests {
     }
 
     pub fn new() -> Self {
-      let client = HELIUS.get().map_or_else(|| None, |h| Some(h.clone()));
+      let env = dotenvy::dotenv();
+      if env.is_err() {
+        info!("no .env file");
+      }
+      let key: Option<String> = env::var("HELIUS_API_KEY").ok();
+      let http_client = reqwest::Client::new();
+      let client: Option<Helius> =
+        key.map(|k| HeliusBuilder::new(&k).http_client(http_client.clone()).build().unwrap());
+      let client = client.map_or_else(|| None, Some);
       Self { client }
     }
   }
