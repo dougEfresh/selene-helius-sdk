@@ -22,7 +22,6 @@ exclude = [
     "codecov.yml"
 ]
 
-
 [lib]
 name = "selene_helius_sdk"
 path = "src/lib.rs"
