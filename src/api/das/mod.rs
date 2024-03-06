@@ -91,6 +91,13 @@ impl Helius {
   pub async fn get_token_accounts(&self, params: &GetTokenAccountsParams) -> Result<GetTokenAccountsResponse> {
     self.post("getTokenAccounts", params).await
   }
+
+  /// # Errors
+  /// 
+  /// Will return `HeliusError`
+  pub async fn get_token_metadata(&self, params: &GetMetadataParams) -> Result<Vec<GetMetadataResponse>> { 
+    self.handler.post(self.make_url("token-metadata")?, params).await
+  }
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Default)]

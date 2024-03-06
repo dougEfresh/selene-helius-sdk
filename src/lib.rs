@@ -476,6 +476,23 @@ mod tests {
   }
 
   #[rstest::rstest]
+  #[tokio::test]
+  async fn get_token_metadata(config: Config) -> color_eyre::Result<()> {
+    if config.client.is_none() {
+      return Ok(());
+    }
+    let client = config.client();
+    let rando = String::from("7CKJJqPBiSXJevF3oWBGZ2A1wyydXh3LtUKNBUc1rmAK"); 
+    let params=GetMetadataParams{
+      mint_accounts:vec![rando.to_string()],
+      ..Default::default()
+    };
+    let token_metadata = client.get_token_metadata(&params).await?; 
+    assert!(!token_metadata.is_empty()); 
+    Ok(())
+  }
+
+  #[rstest::rstest]
   #[test]
   fn check_ci(config: Config) -> color_eyre::Result<()> {
     match env::var("CI") {
