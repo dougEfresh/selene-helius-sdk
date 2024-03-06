@@ -375,8 +375,8 @@ impl Default for GetMetadataParams {
 #[serde(rename_all = "camelCase")]
 pub struct GetMetadataResponse{
   pub account: String,
-  pub on_chain_account_info: Option<OnChainAccountInfo>,
-  pub on_chain_metadata:  Option<OnChainMetadata>,
+  pub on_chain_account_info: OnChainAccountInfo,
+  pub on_chain_metadata:  OnChainMetadata,
   pub legacy_metadata: Option<serde_json::Value>,
 }
  
@@ -412,8 +412,8 @@ pub struct AccountDataField {
 #[serde(rename_all = "camelCase")]
 pub struct ParsedData {
   pub info: MetaTokenInfo,
-    #[serde(rename = "type")]
-    pub data_type: String,
+  #[serde(rename = "type")]
+  pub data_type: String,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug,Default)]
