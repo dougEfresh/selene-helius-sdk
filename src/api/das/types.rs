@@ -187,7 +187,7 @@ pub struct Uses {
   pub use_method: UseMethods,
   pub remaining: u32,
   pub total: u32,
-} 
+}
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Default)]
 pub struct Creators {
@@ -344,50 +344,43 @@ pub struct GetTokenAccountsParams {
   pub mint: Option<String>,
 }
 
-
 impl Default for GetTokenAccountsParams {
   fn default() -> Self {
     Self { page: 1, limit: None, display_options: TokenAccountDisplayOptions::default(), owner: None, mint: None }
   }
 }
 
-
-
-
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
-pub struct GetMetadataParams{
-  pub mint_accounts:Vec<String>,
+pub struct GetMetadataParams {
+  pub mint_accounts: Vec<String>,
   pub include_off_chain: Option<bool>,
   pub disable_cache: Option<bool>,
 }
 
-
 impl Default for GetMetadataParams {
-  fn default() -> Self { 
-    Self { mint_accounts:vec![String::from("")], include_off_chain: None, disable_cache: None }
+  fn default() -> Self {
+    Self { mint_accounts: vec![String::from("")], include_off_chain: None, disable_cache: None }
   }
 }
 
-
-
-#[derive(Serialize, Deserialize, Clone, Debug,Default)]
+#[derive(Serialize, Deserialize, Clone, Debug, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct GetMetadataResponse{
+pub struct GetMetadataResponse {
   pub account: String,
   pub on_chain_account_info: OnChainAccountInfo,
-  pub on_chain_metadata:  OnChainMetadata,
+  pub on_chain_metadata: OnChainMetadata,
   pub legacy_metadata: Option<serde_json::Value>,
 }
- 
-#[derive(Serialize, Deserialize, Clone, Debug,Default)]
+
+#[derive(Serialize, Deserialize, Clone, Debug, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct OnChainAccountInfo {
   pub account_info: AccountInfo,
   pub error: String,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug,Default)]
+#[derive(Serialize, Deserialize, Clone, Debug, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct AccountInfo {
   pub key: String,
@@ -400,15 +393,15 @@ pub struct AccountInfo {
   pub rent_epoch: u64,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug,Default)]
+#[derive(Serialize, Deserialize, Clone, Debug, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct AccountDataField {
-  pub parsed:  Option<ParsedData>,
+  pub parsed: Option<ParsedData>,
   pub program: String,
   pub space: u8,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug,Default)]
+#[derive(Serialize, Deserialize, Clone, Debug, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct ParsedData {
   pub info: MetaTokenInfo,
@@ -416,7 +409,7 @@ pub struct ParsedData {
   pub data_type: String,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug,Default)]
+#[derive(Serialize, Deserialize, Clone, Debug, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct MetaTokenInfo {
   pub decimals: u8,
@@ -426,21 +419,21 @@ pub struct MetaTokenInfo {
   pub supply: String,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug,Default)]
+#[derive(Serialize, Deserialize, Clone, Debug, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct OnChainMetadata {
-  pub metadata:  Option<TokenMetadata>,
+  pub metadata: Option<TokenMetadata>,
   pub error: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug,Default)]
+#[derive(Serialize, Deserialize, Clone, Debug, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct TokenMetadata {
   pub token_standard: String,
   pub key: String,
   pub update_authority: String,
   pub mint: String,
-  pub data:  Option<MetadataData>,
+  pub data: Option<MetadataData>,
   pub primary_sale_happened: bool,
   pub is_mutable: bool,
   pub edition_nonce: u8,
@@ -449,7 +442,7 @@ pub struct TokenMetadata {
   pub collection_details: Option<serde_json::Value>,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug,Default)]
+#[derive(Serialize, Deserialize, Clone, Debug, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct MetadataData {
   pub name: String,
@@ -459,10 +452,10 @@ pub struct MetadataData {
   pub creators: Option<serde_json::Value>,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug,Default)]
+#[derive(Serialize, Deserialize, Clone, Debug, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct MetaUses {
-  pub   use_method: String,
-  pub   remaining: u64,
-  pub   total: u64,
+  pub use_method: String,
+  pub remaining: u64,
+  pub total: u64,
 }

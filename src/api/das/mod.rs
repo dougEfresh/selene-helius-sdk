@@ -93,9 +93,9 @@ impl Helius {
   }
 
   /// # Errors
-  /// 
+  ///
   /// Will return `HeliusError`
-  pub async fn get_token_metadata(&self, params: &GetMetadataParams) -> Result<Vec<GetMetadataResponse>> { 
+  pub async fn get_token_metadata(&self, params: &GetMetadataParams) -> Result<Vec<GetMetadataResponse>> {
     self.handler.post(self.make_url("token-metadata")?, params).await
   }
 }
