@@ -1,5 +1,6 @@
 mod types;
 
+use crate::api::types::{GetPriorityFeeEstimateRequest, GetPriorityFeeEstimateResponse};
 use crate::Helius;
 use crate::Result;
 use serde::de::DeserializeOwned;
@@ -9,6 +10,7 @@ use std::fmt::Debug;
 pub use types::*;
 
 impl Helius {
+  #[tracing::instrument(skip(self, params))]
   async fn post<P, T>(&self, method: &str, params: P) -> Result<T>
   where
     P: Serialize + Sized + Debug + Send + Sync,
@@ -90,6 +92,16 @@ impl Helius {
   /// Will return `HeliusError`
   pub async fn get_token_accounts(&self, params: &GetTokenAccountsParams) -> Result<GetTokenAccountsResponse> {
     self.post("getTokenAccounts", params).await
+  }
+
+  /// # Errors
+  ///
+  /// Will return `HeliusError`
+  pub async fn get_estimate_priority_fee(
+    &self,
+    params: &GetPriorityFeeEstimateRequest,
+  ) -> Result<GetPriorityFeeEstimateResponse> {
+    self.post("getPriorityFeeEstimate", vec![params]).await
   }
 }
 

@@ -1,6 +1,7 @@
 use crate::api::types::{
   AssetSortBy, AssetSortDirection, Context, Interface, OwnershipModel, RoyaltyModel, Scope, TokenType, UseMethods,
 };
+use crate::util::deserialize_u32_from_null;
 use bigdecimal::{BigDecimal, Zero};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -177,6 +178,8 @@ pub struct Ownership {
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Default)]
 pub struct Supply {
+  #[serde(default)]
+  #[serde(deserialize_with = "deserialize_u32_from_null")]
   pub print_max_supply: u32,
   pub print_current_supply: u32,
   pub edition_nonce: Option<u32>,

@@ -74,6 +74,7 @@ API reference documentation is available at [docs.helius.dev](https://docs.heliu
 | [searchAssets](https://docs.helius.dev/compression-and-das-api/digital-asset-standard-das-api/search-assets)                     | &check; |
 | [getSignaturesForAsset](https://docs.helius.dev/compression-and-das-api/digital-asset-standard-das-api/get-signatures-for-asset) | &cross; |
 | [getTokenAccounts](https://docs.helius.dev/compression-and-das-api/digital-asset-standard-das-api/get-token-accounts)            | &check; |
+| [getPriorityFeeEstimate](https://docs.helius.dev/solana-rpc-nodes/alpha-priority-fee-api#priority-fee-estimate)                  | &check; |
 
 ### Enriched Transactions
 

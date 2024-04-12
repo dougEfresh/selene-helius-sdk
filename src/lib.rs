@@ -58,7 +58,10 @@ mod tests {
     GetTokenAccountsParams, Pagination, SearchAssetsParams, TokenInfo,
   };
   use crate::api::types::enhanced::ParseTransactionsRequest;
-  use crate::api::types::{AccountWebhookEncoding, TokenType, TransactionType, TxnStatus};
+  use crate::api::types::{
+    AccountWebhookEncoding, FeeLevelRequest, GetPriorityFeeEstimateOptions, GetPriorityFeeEstimateRequest,
+    GetPriorityFeeEstimateResponse, PriorityLevel, TokenType, TransactionType, TxnStatus,
+  };
   use crate::api::webhook::{CreateWebhookRequest, EditWebhookRequest, WebhookData, WebhookType};
   use crate::api::{Helius, HeliusBuilder};
   use bigdecimal::{BigDecimal, Zero};
@@ -472,6 +475,47 @@ mod tests {
     assert!(!token_accounts.token_accounts.is_empty());
     assert!(token_accounts.total > 0);
     assert_eq!(token_accounts.page, 1);
+    Ok(())
+  }
+
+  #[rstest::rstest]
+  #[tokio::test]
+  async fn get_estimate_fee(config: Config) -> color_eyre::Result<()> {
+    if config.client.is_none() {
+      return Ok(());
+    }
+    let client = config.client();
+    let randos = vec![
+      String::from("JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4"),
+      String::from("oreoN2tQbHXVaZsr3pf66A48miqcBXCDJozganhEJgz"),
+    ];
+    let req = GetPriorityFeeEstimateRequest { account_keys: Vec::clone(&randos), ..Default::default() };
+    let fees = client.get_estimate_priority_fee(&req).await?;
+    match fees {
+      GetPriorityFeeEstimateResponse::Estimate(_) => {
+        unreachable!();
+      },
+      GetPriorityFeeEstimateResponse::Levels(l) => {
+        assert!(l.high > 0.0);
+      },
+    };
+
+    let req = GetPriorityFeeEstimateRequest {
+      transaction: None,
+      account_keys: Vec::clone(&randos),
+      options: GetPriorityFeeEstimateOptions::Priority(FeeLevelRequest { priority_level: PriorityLevel::High }),
+    };
+
+    let fees = client.get_estimate_priority_fee(&req).await?;
+
+    match fees {
+      GetPriorityFeeEstimateResponse::Estimate(f) => {
+        assert!(f > 0.0);
+      },
+      GetPriorityFeeEstimateResponse::Levels(_) => {
+        unreachable!();
+      },
+    };
     Ok(())
   }
 

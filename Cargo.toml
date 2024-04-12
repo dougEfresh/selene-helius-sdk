@@ -1,6 +1,6 @@
 [package]
 name = "selene-helius-sdk"
-version = "0.2.4"
+version = "0.3.0"
 edition = "2021"
 authors = ["dougefresh <dchimento@gmail.com>"]
 description = "Rust implementation of the Helius API & RPC"
@@ -39,6 +39,9 @@ must_use_candidate = "allow"
 module_name_repetitions = "allow"
 missing_const_for_fn = "allow"
 
+[features]
+default = []
+debug = []
 
 [dependencies]
 solana-client = { version = ">= 1.16" }
