@@ -41,4 +41,7 @@ pub enum HeliusError {
 
   #[error("Invalid fee response type {response}")]
   InvalidFeeResponse { response: String },
+
+  #[error(transparent)]
+  TransactionEncodeError(#[from] bincode::Error),
 }

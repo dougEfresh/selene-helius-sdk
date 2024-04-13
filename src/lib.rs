@@ -66,6 +66,9 @@ mod tests {
   use solana_client::rpc_config::RpcBlockConfig;
   use solana_sdk::clock::Slot;
   use solana_sdk::commitment_config::CommitmentConfig;
+  use solana_sdk::signature::Keypair;
+  use solana_sdk::signer::Signer;
+  use solana_sdk::system_transaction;
   use solana_sdk::transaction::VersionedTransaction;
   use solana_transaction_status::UiTransactionEncoding;
   use std::env;
@@ -490,6 +493,22 @@ mod tests {
     assert!(fees.high > 0.0);
     let fees = client.get_estimate_priority_fee(randos, PriorityLevel::High).await?;
     assert!(fees > 0.0);
+    Ok(())
+  }
+
+  #[rstest::rstest]
+  #[tokio::test]
+  async fn get_estimate_fee_transaction(config: Config) -> color_eyre::Result<()> {
+    if config.client.is_none() {
+      return Ok(());
+    }
+    let client = config.client();
+    let sender = Keypair::new();
+    let recipient = Keypair::new();
+
+    let bh = client.connection().get_latest_blockhash().await?;
+    let transaction = system_transaction::transfer(&sender, &recipient.pubkey(), 10_000_000, bh);
+    client.get_estimate_priority_fee_transaction(&transaction, PriorityLevel::High).await?;
     Ok(())
   }
 

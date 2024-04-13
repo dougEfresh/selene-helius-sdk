@@ -3,12 +3,14 @@ mod types;
 
 use crate::Result;
 use crate::{error, Helius};
+use bincode::serialize;
 pub use fee::{
   AllFeeLevelsRequest, FeeLevelRequest, GetPriorityFeeEstimateOptions, GetPriorityFeeEstimateRequest,
   GetPriorityFeeEstimateResponse, MicroLamportPriorityFee, MicroLamportPriorityFeeLevels, PriorityLevel,
 };
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
+use solana_client::rpc_client::SerializableTransaction;
 use std::collections::HashMap;
 use std::fmt::Debug;
 pub use types::*;
@@ -137,6 +139,30 @@ impl Helius {
     let req = GetPriorityFeeEstimateRequest {
       transaction: None,
       account_keys: accounts,
+      options: GetPriorityFeeEstimateOptions::Priority(FeeLevelRequest { priority_level: lvl }),
+    };
+    match self.call_estimate_priority_fee(&req).await? {
+      GetPriorityFeeEstimateResponse::Estimate(e) => Ok(e),
+      GetPriorityFeeEstimateResponse::Levels(r) => {
+        Err(error::HeliusError::InvalidFeeResponse { response: format!("{r:#?}") })
+      },
+    }
+  }
+
+  /// [priority fee estimate](https://docs.helius.dev/solana-rpc-nodes/alpha-priority-fee-api#priority-fee-estimate) for a [`solana_sdk::transaction::Transaction`]
+  ///
+  /// # Errors
+  ///
+  /// Will return [`HeliusError`]
+  pub async fn get_estimate_priority_fee_transaction<T: SerializableTransaction + Sync>(
+    &self,
+    transaction: &T,
+    lvl: PriorityLevel,
+  ) -> Result<MicroLamportPriorityFee> {
+    let s = bs58::encode(serialize(transaction)?).into_string();
+    let req = GetPriorityFeeEstimateRequest {
+      transaction: Some(s),
+      account_keys: Vec::new(),
       options: GetPriorityFeeEstimateOptions::Priority(FeeLevelRequest { priority_level: lvl }),
     };
     match self.call_estimate_priority_fee(&req).await? {
