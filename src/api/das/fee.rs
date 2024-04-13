@@ -26,7 +26,7 @@ impl Default for GetPriorityFeeEstimateOptions {
 #[derive(Deserialize, Serialize, Clone, Debug, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct AllFeeLevelsRequest {
-  include_all_priority_fee_levels: bool,
+  pub include_all_priority_fee_levels: bool,
   pub lookback_slots: u8, // number of slots to look back to calculate estimate. Valid number are 1-150, defualt is 150
 }
 
@@ -70,7 +70,7 @@ impl Default for GetPriorityFeeEstimateResponse {
   }
 }
 
-type MicroLamportPriorityFee = f64;
+pub type MicroLamportPriorityFee = f64;
 
 #[derive(Deserialize, Serialize, Clone, Debug, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]

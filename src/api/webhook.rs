@@ -8,7 +8,7 @@ const WEBHOOK_BASE: &str = "webhooks";
 impl Helius {
   /// # Errors
   ///
-  /// Will return `HeliusError`
+  /// Will return [`HeliusError`]
   #[tracing::instrument(skip(self))]
   pub async fn get_all_webhooks(&self) -> Result<Vec<Webhook>> {
     self.handler.get(self.make_url(WEBHOOK_BASE)?).await
@@ -16,7 +16,7 @@ impl Helius {
 
   /// # Errors
   ///
-  /// Will return `HeliusError`
+  /// Will return [`HeliusError`]
   #[tracing::instrument(skip(self))]
   pub async fn get_webhook_by_id(&self, webhook_id: &str) -> Result<Webhook> {
     self.handler.get(self.make_url(&format!("{WEBHOOK_BASE}/{webhook_id}"))?).await
@@ -24,7 +24,7 @@ impl Helius {
 
   /// # Errors
   ///
-  /// Will return `HeliusError`
+  /// Will return [`HeliusError`]
   #[tracing::instrument(skip(self, request))]
   pub async fn create_webhook(&self, request: &CreateWebhookRequest) -> Result<Webhook> {
     self.handler.post(self.make_url(WEBHOOK_BASE)?, request).await
@@ -32,7 +32,7 @@ impl Helius {
 
   /// # Errors
   ///
-  /// Will return `HeliusError`
+  /// Will return [`HeliusError`]
   #[tracing::instrument(skip(self, request))]
   pub async fn edit_webhook(&self, request: &EditWebhookRequest) -> Result<Webhook> {
     self.handler.put(self.make_url(&format!("{WEBHOOK_BASE}/{}", request.webhook_id))?, &request.data).await
@@ -40,7 +40,7 @@ impl Helius {
 
   /// # Errors
   ///
-  /// Will return `HeliusError`
+  /// Will return [`HeliusError`]
   #[tracing::instrument(skip(self))]
   pub async fn delete_webhook(&self, webhook_id: &str) -> Result<()> {
     self.handler.delete(self.make_url(&format!("{WEBHOOK_BASE}/{webhook_id}"))?).await
@@ -48,7 +48,7 @@ impl Helius {
 
   /// # Errors
   ///
-  /// Will return `HeliusError`
+  /// Will return [`HeliusError`]
   #[tracing::instrument(skip(self))]
   pub async fn append_addresses_to_webhook(&self, webhook_id: &str, new_addresses: &[String]) -> Result<Webhook> {
     let mut webhook = self.get_webhook_by_id(webhook_id).await?;

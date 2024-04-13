@@ -10,7 +10,7 @@ pub struct Names {
 impl Helius {
   /// # Errors
   ///
-  /// Will return `HeliusError`
+  /// Will return [`HeliusError`]
   #[tracing::instrument(skip(self))]
   pub async fn get_names(&self, address: &str) -> Result<Names> {
     let method = format!("addresses/{address}/names");

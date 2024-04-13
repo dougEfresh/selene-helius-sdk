@@ -38,4 +38,7 @@ pub enum HeliusError {
 
   #[error("Too Many Requests: {path}")]
   TooManyRequests { path: String },
+
+  #[error("Invalid fee response type {response}")]
+  InvalidFeeResponse { response: String },
 }

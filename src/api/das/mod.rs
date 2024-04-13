@@ -1,8 +1,12 @@
+pub mod fee;
 mod types;
 
-use crate::api::types::{GetPriorityFeeEstimateRequest, GetPriorityFeeEstimateResponse};
-use crate::Helius;
 use crate::Result;
+use crate::{error, Helius};
+pub use fee::{
+  AllFeeLevelsRequest, FeeLevelRequest, GetPriorityFeeEstimateOptions, GetPriorityFeeEstimateRequest,
+  GetPriorityFeeEstimateResponse, MicroLamportPriorityFee, MicroLamportPriorityFeeLevels, PriorityLevel,
+};
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -23,28 +27,28 @@ impl Helius {
 
   /// # Errors
   ///
-  /// Will return `HeliusError`
+  /// Will return [`HeliusError`]
   pub async fn get_asset(&self, params: &GetAssetParams) -> Result<GetAssetResponse> {
     self.post("getAsset", params).await
   }
 
   /// # Errors
   ///
-  /// Will return `HeliusError`
+  /// Will return [`HeliusError`]
   pub async fn get_asset_batch(&self, params: &GetAssetBatchParams) -> Result<Vec<GetAssetResponse>> {
     self.post("getAssetBatch", params).await
   }
 
   /// # Errors
   ///
-  /// Will return `HeliusError`
+  /// Will return [`HeliusError`]
   pub async fn get_asset_proof(&self, params: &GetAssetProofParams) -> Result<GetAssetProofResponse> {
     self.post("getAssetProof", params).await
   }
 
   /// # Errors
   ///
-  /// Will return `HeliusError`
+  /// Will return [`HeliusError`]
   pub async fn get_asset_proof_batch(
     &self,
     params: &GetAssetProofBatchParams,
@@ -54,54 +58,93 @@ impl Helius {
 
   /// # Errors
   ///
-  /// Will return `HeliusError`
+  /// Will return [`HeliusError`]
   pub async fn get_assets_by_owner(&self, params: &GetAssetsByOwnerParams) -> Result<GetAssetResponseList> {
     self.post("getAssetsByOwner", params).await
   }
 
   /// # Errors
   ///
-  /// Will return `HeliusError`
+  /// Will return [`HeliusError`]
   pub async fn get_assets_by_authority(&self, params: &GetAssetsByAuthorityParams) -> Result<GetAssetResponseList> {
     self.post("getAssetsByAuthority", params).await
   }
 
   /// # Errors
   ///
-  /// Will return `HeliusError`
+  /// Will return [`HeliusError`]
   pub async fn get_assets_by_creator(&self, params: &GetAssetsByCreatorParams) -> Result<GetAssetResponseList> {
     self.post("getAssetsByCreator", params).await
   }
 
   /// # Errors
   ///
-  /// Will return `HeliusError`
+  /// Will return [`HeliusError`]
   pub async fn get_assets_by_group(&self, params: &GetAssetsByGroupParams) -> Result<GetAssetResponseList> {
     self.post("getAssetsByGroup", params).await
   }
 
   /// # Errors
   ///
-  /// Will return `HeliusError`
+  /// Will return [`HeliusError`]
   pub async fn search_assets(&self, params: &SearchAssetsParams) -> Result<GetAssetResponseList> {
     self.post("searchAssets", params).await
   }
 
   /// # Errors
   ///
-  /// Will return `HeliusError`
+  /// Will return [`HeliusError`]
   pub async fn get_token_accounts(&self, params: &GetTokenAccountsParams) -> Result<GetTokenAccountsResponse> {
     self.post("getTokenAccounts", params).await
   }
 
-  /// # Errors
-  ///
-  /// Will return `HeliusError`
-  pub async fn get_estimate_priority_fee(
+  async fn call_estimate_priority_fee(
     &self,
     params: &GetPriorityFeeEstimateRequest,
   ) -> Result<GetPriorityFeeEstimateResponse> {
     self.post("getPriorityFeeEstimate", vec![params]).await
+  }
+
+  /// [priority fee estimate](https://docs.helius.dev/solana-rpc-nodes/alpha-priority-fee-api#priority-fee-estimate) returning a [level](crate::api::types::PriorityLevel) range
+  ///  
+  /// # Errors
+  ///
+  /// Will return [`HeliusError`]
+  pub async fn get_estimate_priority_fee_levels(&self, accounts: Vec<String>) -> Result<MicroLamportPriorityFeeLevels> {
+    let req = GetPriorityFeeEstimateRequest {
+      transaction: None,
+      account_keys: accounts,
+      options: GetPriorityFeeEstimateOptions::AllFeeLevels(AllFeeLevelsRequest::default()),
+    };
+    match self.call_estimate_priority_fee(&req).await? {
+      GetPriorityFeeEstimateResponse::Estimate(e) => {
+        Err(error::HeliusError::InvalidFeeResponse { response: format!("{e:#?}") })
+      },
+      GetPriorityFeeEstimateResponse::Levels(r) => Ok(r),
+    }
+  }
+
+  /// [priority fee estimate](https://docs.helius.dev/solana-rpc-nodes/alpha-priority-fee-api#priority-fee-estimate) for a given [level](crate::api::types::PriorityLevel)
+  ///
+  /// # Errors
+  ///
+  /// Will return [`HeliusError`]
+  pub async fn get_estimate_priority_fee(
+    &self,
+    accounts: Vec<String>,
+    lvl: PriorityLevel,
+  ) -> Result<MicroLamportPriorityFee> {
+    let req = GetPriorityFeeEstimateRequest {
+      transaction: None,
+      account_keys: accounts,
+      options: GetPriorityFeeEstimateOptions::Priority(FeeLevelRequest { priority_level: lvl }),
+    };
+    match self.call_estimate_priority_fee(&req).await? {
+      GetPriorityFeeEstimateResponse::Estimate(e) => Ok(e),
+      GetPriorityFeeEstimateResponse::Levels(r) => {
+        Err(error::HeliusError::InvalidFeeResponse { response: format!("{r:#?}") })
+      },
+    }
   }
 }
 

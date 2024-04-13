@@ -55,13 +55,10 @@ mod tests {
   use crate::api::das::{
     DisplayOptions, GetAssetBatchParams, GetAssetParams, GetAssetProofBatchParams, GetAssetProofParams,
     GetAssetsByAuthorityParams, GetAssetsByCreatorParams, GetAssetsByGroupParams, GetAssetsByOwnerParams,
-    GetTokenAccountsParams, Pagination, SearchAssetsParams, TokenInfo,
+    GetTokenAccountsParams, Pagination, PriorityLevel, SearchAssetsParams, TokenInfo,
   };
   use crate::api::types::enhanced::ParseTransactionsRequest;
-  use crate::api::types::{
-    AccountWebhookEncoding, FeeLevelRequest, GetPriorityFeeEstimateOptions, GetPriorityFeeEstimateRequest,
-    GetPriorityFeeEstimateResponse, PriorityLevel, TokenType, TransactionType, TxnStatus,
-  };
+  use crate::api::types::{AccountWebhookEncoding, TokenType, TransactionType, TxnStatus};
   use crate::api::webhook::{CreateWebhookRequest, EditWebhookRequest, WebhookData, WebhookType};
   use crate::api::{Helius, HeliusBuilder};
   use bigdecimal::{BigDecimal, Zero};
@@ -489,33 +486,10 @@ mod tests {
       String::from("JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4"),
       String::from("oreoN2tQbHXVaZsr3pf66A48miqcBXCDJozganhEJgz"),
     ];
-    let req = GetPriorityFeeEstimateRequest { account_keys: Vec::clone(&randos), ..Default::default() };
-    let fees = client.get_estimate_priority_fee(&req).await?;
-    match fees {
-      GetPriorityFeeEstimateResponse::Estimate(_) => {
-        unreachable!();
-      },
-      GetPriorityFeeEstimateResponse::Levels(l) => {
-        assert!(l.high > 0.0);
-      },
-    };
-
-    let req = GetPriorityFeeEstimateRequest {
-      transaction: None,
-      account_keys: Vec::clone(&randos),
-      options: GetPriorityFeeEstimateOptions::Priority(FeeLevelRequest { priority_level: PriorityLevel::High }),
-    };
-
-    let fees = client.get_estimate_priority_fee(&req).await?;
-
-    match fees {
-      GetPriorityFeeEstimateResponse::Estimate(f) => {
-        assert!(f > 0.0);
-      },
-      GetPriorityFeeEstimateResponse::Levels(_) => {
-        unreachable!();
-      },
-    };
+    let fees = client.get_estimate_priority_fee_levels(Vec::clone(&randos)).await?;
+    assert!(fees.high > 0.0);
+    let fees = client.get_estimate_priority_fee(randos, PriorityLevel::High).await?;
+    assert!(fees > 0.0);
     Ok(())
   }
 

@@ -2,12 +2,7 @@ use serde::{Deserialize, Serialize};
 pub use serde_enum_str::{Deserialize_enum_str, Serialize_enum_str};
 
 pub mod enhanced;
-mod fee;
 pub mod webhook;
-pub use fee::{
-  FeeLevelRequest, GetPriorityFeeEstimateOptions, GetPriorityFeeEstimateRequest, GetPriorityFeeEstimateResponse,
-  MicroLamportPriorityFeeLevels, PriorityLevel,
-};
 
 #[derive(Deserialize, Serialize, Clone, Debug, PartialEq, Eq, Default)]
 pub enum AssetSortBy {
