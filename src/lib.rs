@@ -39,14 +39,30 @@ pub mod util;
 
 pub type Result<T> = std::result::Result<T, error::HeliusError>;
 
+use crate::error::HeliusError;
 pub use api::{Helius, HeliusBuilder};
 use serde::Serialize;
+use std::str::FromStr;
 
 #[derive(Clone, Copy, Default, Serialize, PartialEq, Eq, Debug)]
 pub enum Cluster {
   #[default]
   MainnetBeta,
   Devnet,
+}
+
+impl FromStr for Cluster {
+  type Err = HeliusError;
+
+  fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
+    if s.to_lowercase().contains("mainnet") {
+      return Ok(Self::MainnetBeta);
+    }
+    if s.to_lowercase().contains("devnet") {
+      return Ok(Self::Devnet);
+    }
+    Err(HeliusError::InvalidCluster { message: String::from(s) })
+  }
 }
 
 #[cfg(test)]
@@ -61,6 +77,7 @@ mod tests {
   use crate::api::types::{AccountWebhookEncoding, TokenType, TransactionType, TxnStatus};
   use crate::api::webhook::{CreateWebhookRequest, EditWebhookRequest, WebhookData, WebhookType};
   use crate::api::{Helius, HeliusBuilder};
+  use crate::Cluster;
   use bigdecimal::{BigDecimal, Zero};
   use color_eyre::eyre::format_err;
   use solana_client::rpc_config::RpcBlockConfig;
@@ -72,6 +89,7 @@ mod tests {
   use solana_sdk::transaction::VersionedTransaction;
   use solana_transaction_status::UiTransactionEncoding;
   use std::env;
+  use std::str::FromStr;
   use std::sync::Once;
   use tracing::info;
   use tracing_subscriber::EnvFilter;
@@ -522,5 +540,19 @@ mod tests {
         None => Err(format_err!("client is not configured and you are running in CI")),
       },
     }
+  }
+
+  #[test]
+  fn cluster_from_str() -> color_eyre::Result<()> {
+    let c = Cluster::from_str("mainnet")?;
+    assert_eq!(Cluster::MainnetBeta, c);
+
+    let c = Cluster::from_str("devnet")?;
+    assert_eq!(Cluster::Devnet, c);
+
+    let r = Cluster::from_str("test");
+    assert!(r.is_err());
+
+    Ok(())
   }
 }

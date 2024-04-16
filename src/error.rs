@@ -33,6 +33,9 @@ pub enum HeliusError {
   #[error("RPC Error  code:{code} message:{message}")]
   RpcError { code: i32, message: String },
 
+  #[error("Invalid cluster:{message}")]
+  InvalidCluster { message: String },
+
   #[error(transparent)]
   SolanaClientError(#[from] solana_client::client_error::ClientError),
 

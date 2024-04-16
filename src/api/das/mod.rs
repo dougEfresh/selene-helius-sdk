@@ -29,28 +29,28 @@ impl Helius {
 
   /// # Errors
   ///
-  /// Will return [`HeliusError`]
+  /// Will return [`crate::HeliusError`]
   pub async fn get_asset(&self, params: &GetAssetParams) -> Result<GetAssetResponse> {
     self.post("getAsset", params).await
   }
 
   /// # Errors
   ///
-  /// Will return [`HeliusError`]
+  /// Will return [`crate::HeliusError`]
   pub async fn get_asset_batch(&self, params: &GetAssetBatchParams) -> Result<Vec<GetAssetResponse>> {
     self.post("getAssetBatch", params).await
   }
 
   /// # Errors
   ///
-  /// Will return [`HeliusError`]
+  /// Will return [`crate::HeliusError`]
   pub async fn get_asset_proof(&self, params: &GetAssetProofParams) -> Result<GetAssetProofResponse> {
     self.post("getAssetProof", params).await
   }
 
   /// # Errors
   ///
-  /// Will return [`HeliusError`]
+  /// Will return [`crate::HeliusError`]
   pub async fn get_asset_proof_batch(
     &self,
     params: &GetAssetProofBatchParams,
@@ -60,42 +60,42 @@ impl Helius {
 
   /// # Errors
   ///
-  /// Will return [`HeliusError`]
+  /// Will return [`crate::HeliusError`]
   pub async fn get_assets_by_owner(&self, params: &GetAssetsByOwnerParams) -> Result<GetAssetResponseList> {
     self.post("getAssetsByOwner", params).await
   }
 
   /// # Errors
   ///
-  /// Will return [`HeliusError`]
+  /// Will return [`crate::HeliusError`]
   pub async fn get_assets_by_authority(&self, params: &GetAssetsByAuthorityParams) -> Result<GetAssetResponseList> {
     self.post("getAssetsByAuthority", params).await
   }
 
   /// # Errors
   ///
-  /// Will return [`HeliusError`]
+  /// Will return [`crate::HeliusError`]
   pub async fn get_assets_by_creator(&self, params: &GetAssetsByCreatorParams) -> Result<GetAssetResponseList> {
     self.post("getAssetsByCreator", params).await
   }
 
   /// # Errors
   ///
-  /// Will return [`HeliusError`]
+  /// Will return [`crate::HeliusError`]
   pub async fn get_assets_by_group(&self, params: &GetAssetsByGroupParams) -> Result<GetAssetResponseList> {
     self.post("getAssetsByGroup", params).await
   }
 
   /// # Errors
   ///
-  /// Will return [`HeliusError`]
+  /// Will return [`crate::HeliusError`]
   pub async fn search_assets(&self, params: &SearchAssetsParams) -> Result<GetAssetResponseList> {
     self.post("searchAssets", params).await
   }
 
   /// # Errors
   ///
-  /// Will return [`HeliusError`]
+  /// Will return [`crate::HeliusError`]
   pub async fn get_token_accounts(&self, params: &GetTokenAccountsParams) -> Result<GetTokenAccountsResponse> {
     self.post("getTokenAccounts", params).await
   }
@@ -107,11 +107,11 @@ impl Helius {
     self.post("getPriorityFeeEstimate", vec![params]).await
   }
 
-  /// [priority fee estimate](https://docs.helius.dev/solana-rpc-nodes/alpha-priority-fee-api#priority-fee-estimate) returning a [level](crate::api::types::PriorityLevel) range
+  /// [priority fee estimate](https://docs.helius.dev/solana-rpc-nodes/alpha-priority-fee-api#priority-fee-estimate) returning a range
   ///  
   /// # Errors
   ///
-  /// Will return [`HeliusError`]
+  /// Will return [`crate::HeliusError`]
   pub async fn get_estimate_priority_fee_levels(&self, accounts: Vec<String>) -> Result<MicroLamportPriorityFeeLevels> {
     let req = GetPriorityFeeEstimateRequest {
       transaction: None,
@@ -126,11 +126,11 @@ impl Helius {
     }
   }
 
-  /// [priority fee estimate](https://docs.helius.dev/solana-rpc-nodes/alpha-priority-fee-api#priority-fee-estimate) for a given [level](crate::api::types::PriorityLevel)
+  /// [priority fee estimate](https://docs.helius.dev/solana-rpc-nodes/alpha-priority-fee-api#priority-fee-estimate) for a given [level](fee::PriorityLevel)
   ///
   /// # Errors
   ///
-  /// Will return [`HeliusError`]
+  /// Will return [`crate::HeliusError`]
   pub async fn get_estimate_priority_fee(
     &self,
     accounts: Vec<String>,
@@ -153,7 +153,7 @@ impl Helius {
   ///
   /// # Errors
   ///
-  /// Will return [`HeliusError`]
+  /// Will return [`crate::HeliusError`]
   pub async fn get_estimate_priority_fee_transaction<T: SerializableTransaction + Sync>(
     &self,
     transaction: &T,

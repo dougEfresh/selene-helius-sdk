@@ -128,8 +128,8 @@ impl HeliusBuilder {
 
 impl Helius {
   #[must_use]
-  pub fn connection(&self) -> &RpcClient {
-    &self.rpc
+  pub fn connection(&self) -> Arc<RpcClient> {
+    self.rpc.clone()
   }
 
   fn make_url(&self, method: &str) -> crate::Result<Url> {
