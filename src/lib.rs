@@ -39,8 +39,10 @@ pub mod util;
 
 pub type Result<T> = std::result::Result<T, error::HeliusError>;
 
+use crate::error::HeliusError;
 pub use api::{Helius, HeliusBuilder};
 use serde::Serialize;
+use std::str::FromStr;
 
 #[derive(Clone, Copy, Default, Serialize, PartialEq, Eq, Debug)]
 pub enum Cluster {
@@ -49,26 +51,45 @@ pub enum Cluster {
   Devnet,
 }
 
+impl FromStr for Cluster {
+  type Err = HeliusError;
+
+  fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
+    if s.to_lowercase().contains("mainnet") {
+      return Ok(Self::MainnetBeta);
+    }
+    if s.to_lowercase().contains("devnet") {
+      return Ok(Self::Devnet);
+    }
+    Err(HeliusError::InvalidCluster { message: String::from(s) })
+  }
+}
+
 #[cfg(test)]
 #[allow(clippy::unwrap_used)]
 mod tests {
   use crate::api::das::{
     DisplayOptions, GetAssetBatchParams, GetAssetParams, GetAssetProofBatchParams, GetAssetProofParams,
     GetAssetsByAuthorityParams, GetAssetsByCreatorParams, GetAssetsByGroupParams, GetAssetsByOwnerParams,
-    GetTokenAccountsParams, Pagination, SearchAssetsParams, TokenInfo,
+    GetTokenAccountsParams, Pagination, PriorityLevel, SearchAssetsParams, TokenInfo,
   };
   use crate::api::types::enhanced::ParseTransactionsRequest;
   use crate::api::types::{AccountWebhookEncoding, TokenType, TransactionType, TxnStatus};
   use crate::api::webhook::{CreateWebhookRequest, EditWebhookRequest, WebhookData, WebhookType};
   use crate::api::{Helius, HeliusBuilder};
+  use crate::Cluster;
   use bigdecimal::{BigDecimal, Zero};
   use color_eyre::eyre::format_err;
   use solana_client::rpc_config::RpcBlockConfig;
   use solana_sdk::clock::Slot;
   use solana_sdk::commitment_config::CommitmentConfig;
+  use solana_sdk::signature::Keypair;
+  use solana_sdk::signer::Signer;
+  use solana_sdk::system_transaction;
   use solana_sdk::transaction::VersionedTransaction;
   use solana_transaction_status::UiTransactionEncoding;
   use std::env;
+  use std::str::FromStr;
   use std::sync::Once;
   use tracing::info;
   use tracing_subscriber::EnvFilter;
@@ -476,6 +497,40 @@ mod tests {
   }
 
   #[rstest::rstest]
+  #[tokio::test]
+  async fn get_estimate_fee(config: Config) -> color_eyre::Result<()> {
+    if config.client.is_none() {
+      return Ok(());
+    }
+    let client = config.client();
+    let randos = vec![
+      String::from("JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4"),
+      String::from("oreoN2tQbHXVaZsr3pf66A48miqcBXCDJozganhEJgz"),
+    ];
+    let fees = client.get_estimate_priority_fee_levels(Vec::clone(&randos)).await?;
+    assert!(fees.high > 0.0);
+    let fees = client.get_estimate_priority_fee(randos, PriorityLevel::High).await?;
+    assert!(fees > 0.0);
+    Ok(())
+  }
+
+  #[rstest::rstest]
+  #[tokio::test]
+  async fn get_estimate_fee_transaction(config: Config) -> color_eyre::Result<()> {
+    if config.client.is_none() {
+      return Ok(());
+    }
+    let client = config.client();
+    let sender = Keypair::new();
+    let recipient = Keypair::new();
+
+    let bh = client.connection().get_latest_blockhash().await?;
+    let transaction = system_transaction::transfer(&sender, &recipient.pubkey(), 10_000_000, bh);
+    client.get_estimate_priority_fee_transaction(&transaction, PriorityLevel::High).await?;
+    Ok(())
+  }
+
+  #[rstest::rstest]
   #[test]
   fn check_ci(config: Config) -> color_eyre::Result<()> {
     match env::var("CI") {
@@ -485,5 +540,19 @@ mod tests {
         None => Err(format_err!("client is not configured and you are running in CI")),
       },
     }
+  }
+
+  #[test]
+  fn cluster_from_str() -> color_eyre::Result<()> {
+    let c = Cluster::from_str("mainnet")?;
+    assert_eq!(Cluster::MainnetBeta, c);
+
+    let c = Cluster::from_str("devnet")?;
+    assert_eq!(Cluster::Devnet, c);
+
+    let r = Cluster::from_str("test");
+    assert!(r.is_err());
+
+    Ok(())
   }
 }

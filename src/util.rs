@@ -2,6 +2,14 @@ use serde::de::Error as SerdeError;
 use serde::{Deserialize, Deserializer};
 use serde_json::{Number, Value};
 
+pub(crate) fn deserialize_u32_from_null<'de, D>(deserializer: D) -> Result<u32, D::Error>
+where
+  D: Deserializer<'de>,
+{
+  let opt = Option::<u32>::deserialize(deserializer)?;
+  Ok(opt.unwrap_or_default())
+}
+
 pub(crate) fn deserialize_str_to_number<'de, D>(deserializer: D) -> Result<Number, D::Error>
 where
   D: Deserializer<'de>,
