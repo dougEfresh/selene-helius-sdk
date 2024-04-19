@@ -256,7 +256,10 @@ mod tests {
     }
     let client = config.client();
     let mad_libs = String::from("F9Lw3ki3hJ7PF9HQXsBzoY8GyE6sPoEZZdXJBsTTD2rk");
-    let res = client.get_asset(&GetAssetParams { id: mad_libs.clone(), display_options: None }).await?;
+    let res = client
+      .get_asset(&GetAssetParams { id: mad_libs.clone(), display_options: None })
+      .await?
+      .expect("mad_lib address should exists");
     assert_eq!(res.id, mad_libs);
     Ok(())
   }
@@ -270,7 +273,10 @@ mod tests {
     let client = config.client();
     let jito = String::from("J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn");
     let opts = DisplayOptions { show_fungible: true, show_inscription: false };
-    let res = client.get_asset(&GetAssetParams { id: jito.clone(), display_options: Some(opts) }).await?;
+    let res = client
+      .get_asset(&GetAssetParams { id: jito.clone(), display_options: Some(opts) })
+      .await?
+      .expect("jito address should exists");
     assert_eq!(res.id, jito);
     Ok(())
   }
@@ -284,8 +290,25 @@ mod tests {
     let client = config.client();
     let rando = String::from("AKo9P7S8FE9NYeAcrtZEpimwQAXJMp8Lrt8p4dMkHkY2");
     let opts = DisplayOptions { show_fungible: false, show_inscription: true };
-    let res = client.get_asset(&GetAssetParams { id: rando.clone(), display_options: Some(opts) }).await?;
+    let res = client
+      .get_asset(&GetAssetParams { id: rando.clone(), display_options: Some(opts) })
+      .await?
+      .expect("rando address should exists");
     assert_eq!(res.id, rando);
+    Ok(())
+  }
+
+  #[rstest::rstest]
+  #[tokio::test]
+  async fn get_asset_non_exist_mint(config: Config) -> color_eyre::Result<()> {
+    if config.client.is_none() {
+      return Ok(());
+    }
+    let client = config.client();
+    let non_exist_mint = String::from("HXyEGGvDDJvXuYkvD7cwYSwrSPKvqn54BY3BpqGVozei");
+    let opts = DisplayOptions { show_fungible: true, show_inscription: true };
+    let res = client.get_asset(&GetAssetParams { id: non_exist_mint.clone(), display_options: Some(opts) }).await?;
+    assert_eq!(res, None);
     Ok(())
   }
 
@@ -299,10 +322,12 @@ mod tests {
     let ids: Vec<String> = vec![
       "81bxPqYCE8j34nQm7Rooqi8Vt3iMHLzgZJ71rUVbQQuz".to_string(),
       "AKo9P7S8FE9NYeAcrtZEpimwQAXJMp8Lrt8p4dMkHkY2".to_string(),
+      "HXyEGGvDDJvXuYkvD7cwYSwrSPKvqn54BY3BpqGVozei".to_string(), // Non existing mint
     ];
 
     let res = client.get_asset_batch(&GetAssetBatchParams { ids, display_options: None }).await?;
-    assert!(!res.is_empty());
+    assert!(res.len() == 3);
+    assert!(res[2].is_none()); // make sure non-existing mint is deserialized as None
     Ok(())
   }
 
@@ -324,6 +349,27 @@ mod tests {
       })
       .await?;
     assert!(!res.items.is_empty());
+    Ok(())
+  }
+
+  #[rstest::rstest]
+  #[tokio::test]
+  async fn get_asset_by_non_exist_owner(config: Config) -> color_eyre::Result<()> {
+    if config.client.is_none() {
+      return Ok(());
+    }
+    let client = config.client();
+    let owner = String::from("HXyEGGvDDJvXuYkvD7cwYSwrSPKvqn54BY3BpqGVozei");
+    let opts = DisplayOptions { show_fungible: true, show_inscription: false };
+    let res = client
+      .get_assets_by_owner(&GetAssetsByOwnerParams {
+        display_options: Some(opts),
+        owner_address: owner.clone(),
+        sort_by: None,
+        pagination: Pagination::default(),
+      })
+      .await?;
+    assert!(res.items.is_empty());
     Ok(())
   }
 

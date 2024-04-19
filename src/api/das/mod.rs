@@ -30,21 +30,21 @@ impl Helius {
   /// # Errors
   ///
   /// Will return [`crate::HeliusError`]
-  pub async fn get_asset(&self, params: &GetAssetParams) -> Result<GetAssetResponse> {
+  pub async fn get_asset(&self, params: &GetAssetParams) -> Result<Option<GetAssetResponse>> {
     self.post("getAsset", params).await
   }
 
   /// # Errors
   ///
   /// Will return [`crate::HeliusError`]
-  pub async fn get_asset_batch(&self, params: &GetAssetBatchParams) -> Result<Vec<GetAssetResponse>> {
+  pub async fn get_asset_batch(&self, params: &GetAssetBatchParams) -> Result<Vec<Option<GetAssetResponse>>> {
     self.post("getAssetBatch", params).await
   }
 
   /// # Errors
   ///
   /// Will return [`crate::HeliusError`]
-  pub async fn get_asset_proof(&self, params: &GetAssetProofParams) -> Result<GetAssetProofResponse> {
+  pub async fn get_asset_proof(&self, params: &GetAssetProofParams) -> Result<Option<GetAssetProofResponse>> {
     self.post("getAssetProof", params).await
   }
 
