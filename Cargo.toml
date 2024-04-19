@@ -1,13 +1,13 @@
 [package]
 name = "selene-helius-sdk"
-version = "0.3.0"
+version = "0.3.1"
 edition = "2021"
 authors = ["dougefresh <dchimento@gmail.com>"]
 description = "Rust implementation of the Helius API & RPC"
 readme = "README.md"
 repository = "https://github.com/dougEfresh/selene-helius-sdk"
 homepage = "https://github.com/dougEfresh/selene-helius-sdk"
-documentation = "https://docs.rs/selene-helius-sdk/0.1.0/selene_helius_sdk/"
+documentation = "https://docs.rs/selene-helius-sdk"
 license = "MIT"
 keywords = ["solana", "helius"]
 categories = ["cryptography::cryptocurrencies"]
