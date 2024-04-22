@@ -322,9 +322,9 @@ impl Default for PriceInfo {
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct NativeBalance {
-  lamports: u64,
-  price_per_sol: BigDecimal,
-  total_price: BigDecimal,
+  pub lamports: u64,
+  pub price_per_sol: BigDecimal,
+  pub total_price: BigDecimal,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Default)]
