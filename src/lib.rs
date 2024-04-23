@@ -1,6 +1,6 @@
 //! # Overview
 //!
-//! `selene_helius_sdk` is a async library for the Helius [SDK](https://docs.helius.dev/)
+//! `selene_helius_sdk` is an async library for the Helius [SDK](https://docs.helius.dev/)
 //!
 //! ```rust
 //! use color_eyre::Result;
