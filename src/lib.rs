@@ -71,7 +71,7 @@ mod tests {
   use crate::api::das::{
     DisplayOptions, GetAssetBatchParams, GetAssetParams, GetAssetProofBatchParams, GetAssetProofParams,
     GetAssetsByAuthorityParams, GetAssetsByCreatorParams, GetAssetsByGroupParams, GetAssetsByOwnerParams,
-    GetTokenAccountsParams, Pagination, PriorityLevel, SearchAssetsParams, TokenInfo,
+    GetTokenAccountsParams, Pagination, PriorityLevel, SearchAssetDisplayOptions, SearchAssetsParams, TokenInfo,
   };
   use crate::api::types::enhanced::ParseTransactionsRequest;
   use crate::api::types::{AccountWebhookEncoding, TokenType, TransactionType, TxnStatus};
@@ -429,10 +429,12 @@ mod tests {
           owner_address: Some(rando.clone()),
           token_type: Some(t),
           pagination: Pagination { limit: Some(100), ..Default::default() },
+          display_options: Some(SearchAssetDisplayOptions { show_native_balance: true, ..Default::default() }),
           ..Default::default()
         })
         .await?;
       assert!(!r.items.is_empty());
+      assert!(r.native_balance.is_some());
     }
     Ok(())
   }

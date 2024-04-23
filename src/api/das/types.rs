@@ -43,6 +43,18 @@ pub struct SearchAssetsParams {
   pub royalty_target_type: Option<RoyaltyModel>,
   pub compressible: Option<bool>,
   pub compressed: Option<bool>,
+  pub display_options: Option<SearchAssetDisplayOptions>,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Default)]
+#[serde(rename_all = "camelCase")]
+#[allow(clippy::struct_excessive_bools)]
+pub struct SearchAssetDisplayOptions {
+  pub show_inscription: bool,
+  pub show_native_balance: bool,
+  pub show_zero_balance: bool,
+  pub show_unverified_collections: bool,
+  pub require_full_index: bool,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Default)]
@@ -146,12 +158,15 @@ pub struct GetAssetResponse {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Default)]
+#[serde(rename_all = "camelCase")]
 pub struct GetAssetResponseList {
   pub grand_total: Option<bool>,
   pub total: u32,
   pub limit: u32,
   pub page: u32,
   pub items: Vec<GetAssetResponse>,
+  /// Available when query `search assets` and `display_options.show_native_balance = true`
+  pub native_balance: Option<NativeBalance>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Default)]
@@ -303,6 +318,13 @@ impl Default for PriceInfo {
   fn default() -> Self {
     Self { price_per_token: BigDecimal::zero(), total_price: BigDecimal::zero(), currency: String::from("USDC") }
   }
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct NativeBalance {
+  pub lamports: u64,
+  pub price_per_sol: BigDecimal,
+  pub total_price: BigDecimal,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Default)]
