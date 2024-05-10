@@ -25,19 +25,6 @@ impl RequestHandler {
     T: DeserializeOwned + Default,
   {
     let path = String::from(url.path());
-    #[cfg(not(debug))]
-    debug!("sending request {method} {path}");
-
-    #[cfg(debug)]
-    match body {
-      None => debug!("sending request {method} {path}"),
-      Some(b) => {
-        if let Ok(s) = serde_json::to_string(b) {
-          debug!("sending request {method} {path} {:#?}", s);
-        }
-      },
-    }
-
     let mut req = match method {
       Method::GET => self.http_client.get(url),
       Method::POST => self.http_client.post(url),
