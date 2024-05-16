@@ -322,9 +322,11 @@ impl Default for PriceInfo {
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct NativeBalance {
+  // helius does not return this field if account don't exist on chain
+  #[serde(default)]
   pub lamports: u64,
   pub price_per_sol: BigDecimal,
-  pub total_price: BigDecimal,
+  pub total_price: Option<BigDecimal>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Default)]
@@ -372,5 +374,16 @@ pub struct GetTokenAccountsParams {
 impl Default for GetTokenAccountsParams {
   fn default() -> Self {
     Self { page: 1, limit: None, display_options: TokenAccountDisplayOptions::default(), owner: None, mint: None }
+  }
+}
+
+#[cfg(test)]
+mod test {
+  use super::*;
+
+  #[test]
+  fn deserialize_search_asset_response_for_owner_non_exist_address() {
+    let raw_json = r#"{"total":0,"limit":1000,"page":1,"items":[],"nativeBalance":{"price_per_sol":161.898032174,"total_price":null}}"#;
+    let _response: GetAssetResponseList = serde_json::from_str(raw_json).expect("successful deserialization");
   }
 }

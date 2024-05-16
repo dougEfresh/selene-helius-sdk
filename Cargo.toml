@@ -19,7 +19,7 @@ exclude = [
     "Dockerfile",
     ".env*",
     ".dockerignore",
-    "codecov.yml"
+    "codecov.yml",
 ]
 
 [lib]
@@ -31,8 +31,8 @@ unsafe_code = "forbid"
 
 [lints.clippy]
 enum_glob_use = "deny"
-pedantic = "deny"
-nursery = "deny"
+pedantic = { level = "deny", priority = -1 }
+nursery = { level = "deny", priority = -1 }
 unwrap_used = "deny"
 implicit_return = "allow"
 must_use_candidate = "allow"
