@@ -322,6 +322,8 @@ impl Default for PriceInfo {
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct NativeBalance {
+  // helius does not return this field if account don't exist on chain
+  #[serde(default)]
   pub lamports: u64,
   pub price_per_sol: BigDecimal,
   pub total_price: BigDecimal,
