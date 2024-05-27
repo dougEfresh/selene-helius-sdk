@@ -11,10 +11,11 @@ pub struct EnhancedTransaction {
   #[serde(rename = "type")]
   pub transaction_type: TransactionType,
   pub source: Source,
-  pub fee: i32,
+  /// fee in lamports
+  pub fee: u64,
   pub fee_payer: String,
   pub signature: String,
-  pub slot: i32,
+  pub slot: u64,
   pub native_transfers: Option<Vec<NativeTransfer>>,
   pub token_transfers: Option<Vec<TokenTransfer>>,
   pub transaction_error: Option<TransactionError>,
